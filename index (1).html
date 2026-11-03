@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#05070d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ویجت‌های زنده</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05070d;--fg:#eaf2ff;--mut:#8a97b4;--bd:rgba(255,255,255,.13)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--fg);font-family:Vazirmatn,Tahoma,system-ui,sans-serif}
+body{background:radial-gradient(1100px 600px at 85% -10%,#12406a66,transparent),radial-gradient(900px 560px at 5% 105%,#4a156e55,transparent),var(--bg);background-attachment:fixed}
+.wrap{max-width:1120px;margin:0 auto;padding:max(34px,env(safe-area-inset-top)) 18px 70px}
+header{margin-bottom:30px}
+h1{font-weight:900;font-size:clamp(30px,6vw,52px);line-height:1.2;background:linear-gradient(90deg,#5dffb0,#4db8ff 45%,#c77dff);-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{color:var(--mut);margin-top:10px;font-size:clamp(14px,2.4vw,17px);line-height:1.9;max-width:680px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{position:relative;overflow:hidden;isolation:isolate;border-radius:26px;padding:22px;min-height:200px;cursor:pointer;border:1px solid var(--bd);background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.02));transition:transform .25s,border-color .25s,box-shadow .25s;display:flex;flex-direction:column;justify-content:flex-end;text-align:right}
+.card::before{content:"";position:absolute;width:280px;height:280px;left:-90px;top:-110px;background:radial-gradient(circle,var(--c1),transparent 66%);opacity:.42;z-index:-1;transition:opacity .3s,transform .6s}
+.card::after{content:"";position:absolute;width:200px;height:200px;right:-70px;bottom:-90px;background:radial-gradient(circle,var(--c2),transparent 66%);opacity:.22;z-index:-1}
+.card:hover,.card:focus-visible{transform:translateY(-5px);border-color:var(--c1);box-shadow:0 18px 50px -18px var(--c1);outline:none}
+.card:hover::before{opacity:.7;transform:scale(1.15)}
+.card .ico{position:absolute;top:18px;right:20px;font-size:50px;animation:fl 4s ease-in-out infinite}
+.card:nth-child(2n) .ico{animation-delay:-1.3s}.card:nth-child(3n) .ico{animation-delay:-2.4s}
+@keyframes fl{50%{transform:translateY(-7px) rotate(4deg)}}
+.card h3{font-size:21px;font-weight:900;margin-bottom:6px}
+.card p{font-size:13.5px;line-height:1.8;color:#b9c4dc}
+.tag{position:absolute;top:22px;left:20px;font-size:11px;padding:3px 10px;border-radius:99px;background:#ffffff14;color:var(--mut)}
+footer{margin-top:34px;color:var(--mut);font-size:12px;line-height:2}
+
+#stage{position:fixed;inset:0;z-index:50;background:#000;display:none;height:100dvh}
+#stage.on{display:block}
+#wroot{position:absolute;inset:0;overflow:hidden;color:var(--fg)}
+#bar{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:max(10px,env(safe-area-inset-top)) 12px 22px;background:linear-gradient(rgba(0,0,0,.72),transparent);transition:opacity .45s}
+#bar.hide{opacity:0;pointer-events:none}
+#wtitle{font-weight:900;font-size:16px;margin-inline-end:4px}
+#ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+.btn,.seg button{font:inherit;color:var(--fg);background:rgba(255,255,255,.1);border:1px solid var(--bd);padding:6px 12px;border-radius:12px;cursor:pointer;font-size:13px;backdrop-filter:blur(8px)}
+.btn:active{transform:scale(.96)}
+.btn.on{background:rgba(93,255,176,.25);border-color:#5dffb0}
+.seg{display:inline-flex;border-radius:12px;overflow:hidden;border:1px solid var(--bd)}
+.seg button{border:0;border-radius:0;border-inline-start:1px solid var(--bd)}
+.seg button:first-child{border-inline-start:0}
+.seg button.on{background:rgba(255,255,255,.28);font-weight:700}
+.chip{padding:4px 11px;border-radius:99px;font-size:12px;background:rgba(255,255,255,.12);white-space:nowrap}
+.chip.ok{color:#5dffb0}.chip.warn{color:#ffc04d}.chip.err{color:#ff7b7b}
+input.num{font:inherit;width:110px;color:var(--fg);background:rgba(255,255,255,.1);border:1px solid var(--bd);border-radius:10px;padding:5px 8px;font-size:13px;direction:ltr;text-align:center}
+.lbl{font-size:12px;color:#c5d0e8}
+.panel{position:absolute;z-index:6;background:rgba(6,10,20,.58);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--bd);border-radius:18px;padding:12px 15px;font-size:13px;line-height:1.9}
+.panel b{font-weight:700}
+.dim{color:var(--mut)}
+.err-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:16px;color:#ffb0b0}
+/* radar */
+.rlist{right:12px;top:80px;width:250px;max-height:60%;overflow:auto}
+.rrow{display:flex;justify-content:space-between;gap:8px;padding:5px 6px;border-radius:10px;cursor:pointer;direction:ltr;font-size:12.5px}
+.rrow:hover,.rrow.sel{background:rgba(255,255,255,.12)}
+.rrow i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.rsel{left:12px;bottom:12px;width:min(330px,calc(100% - 24px))}
+.rleg{left:50%;transform:translateX(-50%);bottom:10px;display:flex;gap:10px;align-items:center;padding:7px 14px;direction:ltr;font-size:11px}
+.rleg i{display:block;width:120px;height:8px;border-radius:5px;background:linear-gradient(90deg,hsl(40,100%,60%),hsl(120,100%,60%),hsl(180,100%,60%),hsl(240,100%,60%),hsl(280,100%,60%))}
+.jinfo{left:50%;transform:translateX(-50%);bottom:max(10px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 16px;font-size:12px;white-space:nowrap}
+.jbar{width:150px;height:4px;border-radius:4px;background:#ffffff22;overflow:hidden}.jbar i{display:block;height:100%;background:linear-gradient(90deg,#5dffb0,#4db8ff);width:0}
+.wx{position:absolute;z-index:4;inset:0;display:flex;flex-direction:column;justify-content:center;padding:70px 6vw 190px;pointer-events:none;text-shadow:0 2px 20px rgba(0,0,0,.35)}
+.wx .city{font-size:clamp(18px,3vw,28px);font-weight:700}
+.wx .temp{font-size:clamp(90px,24vmin,230px);font-weight:900;line-height:1;direction:ltr;text-align:right}
+.wx .cond{font-size:clamp(20px,3.6vmin,36px);font-weight:700}
+.wx .meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:clamp(13px,2vmin,18px)}
+.wx .meta span{background:rgba(0,0,0,.25);padding:4px 12px;border-radius:99px;backdrop-filter:blur(6px)}
+.hours{left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:6px;max-width:calc(100% - 20px);overflow-x:auto;padding:8px 10px;direction:ltr}
+.hours div{min-width:58px;text-align:center;font-size:12px;line-height:1.6}
+.hours div span{font-size:20px;display:block}
+.sunl{left:12px;bottom:12px;width:min(260px,calc(100% - 24px))}
+.moonp{right:12px;bottom:12px;width:min(260px,calc(100% - 24px));text-align:center}
+.moonp canvas{width:130px;height:130px}
+.qlist{right:12px;top:80px;width:290px;max-height:62%;overflow:auto}
+.qrow{display:flex;gap:10px;align-items:center;padding:5px 2px;font-size:12.5px;line-height:1.5}
+.qm{min-width:40px;text-align:center;border-radius:10px;padding:3px 0;font-weight:900;color:#111}
+@media(max-width:760px){.rlist,.qlist{display:none}.rsel{bottom:52px}.wx{padding-bottom:210px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="home">
+  <header>
+    <h1>ویجت‌های زنده</h1>
+    <p>روی هر ویجت بزن تا تمام‌صفحه باز بشه. روی کامپیوتر، گوشی و حتی مانیتور ماشین. هر ویجت داده‌ی زنده می‌گیره و برای نمایش دائمی ساخته شده.</p>
+  </header>
+  <main class="grid" id="grid"></main>
+  <footer>داده‌ها از adsb.lol ، TGJU ، CoinGecko ، Open-Meteo و USGS گرفته می‌شن. برای رادار، آب‌وهوا، زلزله و سرعت‌سنج مرورگر ازت دسترسی به لوکیشن می‌خواد (سایت باید روی https باشه).</footer>
+</div>
+
+<div id="stage">
+  <div id="wroot"></div>
+  <div id="bar">
+    <button class="btn" id="bx" title="بستن">✕</button>
+    <span id="wtitle"></span>
+    <span class="chip" id="chip"></span>
+    <span class="chip warn" id="chip2" style="display:none"></span>
+    <div id="ctrl"></div>
+    <div class="sp"></div>
+    <button class="btn" id="bfs" title="تمام‌صفحه">⛶</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ============================ تنظیمات ============================ */
+const CONFIG = {
+  dollarRefreshSec: 10,
+  cryptoRefreshSec: 15,
+  radarRefreshSec: 5,
+  // اگه API قیمت دلار خودت رو داری اینجا بذار. باید عدد قیمت به «تومان» برگردونه. مثلا:
+  // customDollarFetch: async () => (await (await fetch('https://example.com/usd')).json()).price,
+  customDollarFetch: null,
+};
+
+/* ============================ ابزارها ============================ */
+const $ = (s, r = document) => r.querySelector(s);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('wg_' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('wg_' + k, JSON.stringify(v)); } catch (e) {} }
+};
+const nf = (n, d = 0) => Number(n).toLocaleString('fa-IR', { maximumFractionDigits: d, minimumFractionDigits: d });
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const TAU = Math.PI * 2, RAD = Math.PI / 180;
+const rnd = (a, b) => a + Math.random() * (b - a);
+
+async function getJSON(url, { timeout = 9000, opts = {} } = {}) {
+  const c = new AbortController(); const t = setTimeout(() => c.abort(), timeout);
+  try { const r = await fetch(url, { signal: c.signal, ...opts }); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.json(); }
+  finally { clearTimeout(t); }
+}
+async function firstOk(fns) { let err; for (const f of fns) { try { return await f(); } catch (e) { err = e; } } throw err || new Error('fail'); }
+
+function rrect(x, a, b, w, h, r) { r = Math.min(r, w / 2, h / 2); x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath(); }
+
+function mkCanvas(root) {
+  const c = document.createElement('canvas');
+  c.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none';
+  root.appendChild(c);
+  const st = { c, x: c.getContext('2d'), w: 0, h: 0, dpr: 1, onresize: null };
+  const fit = () => { const r = root.getBoundingClientRect(); st.dpr = Math.min(window.devicePixelRatio || 1, 2.5); st.w = r.width; st.h = r.height; c.width = Math.max(1, Math.round(r.width * st.dpr)); c.height = Math.max(1, Math.round(r.height * st.dpr)); };
+  fit();
+  const ro = new ResizeObserver(() => { fit(); st.onresize && st.onresize(); }); ro.observe(root);
+  st.destroy = () => ro.disconnect();
+  st.begin = () => { st.x.setTransform(st.dpr, 0, 0, st.dpr, 0, 0); return st.x; };
+  return st;
+}
+function loop(fn) {
+  let id, last = performance.now(), run = true;
+  const f = t => { if (!run) return; const dt = Math.min(.05, (t - last) / 1000); last = t; try { fn(dt, t / 1000); } catch (e) { console.error(e); } id = requestAnimationFrame(f); };
+  id = requestAnimationFrame(f);
+  return () => { run = false; cancelAnimationFrame(id); };
+}
+function seg(parent, opts, cur, fn) {
+  const d = document.createElement('div'); d.className = 'seg';
+  opts.forEach(([v, l]) => { const b = document.createElement('button'); b.textContent = l; if (v === cur) b.classList.add('on'); b.onclick = () => { [...d.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); fn(v); }; d.appendChild(b); });
+  parent.appendChild(d); return d;
+}
+function btn(parent, label, fn) { const b = document.createElement('button'); b.className = 'btn'; b.textContent = label; b.onclick = () => fn(b); parent.appendChild(b); return b; }
+function panel(root, cls, html) { const d = document.createElement('div'); d.className = 'panel ' + cls; d.innerHTML = html || ''; root.appendChild(d); return d; }
+
+/* لوکیشن */
+function getLoc() {
+  return new Promise((res, rej) => {
+    if (!navigator.geolocation) return rej(new Error('no geo'));
+    navigator.geolocation.getCurrentPosition(p => { const l = { lat: p.coords.latitude, lon: p.coords.longitude }; store.set('loc', l); res(l); }, rej, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+  });
+}
+async function ensureLoc(api) {
+  try { const l = await getLoc(); api.note(''); return { ...l, approx: false }; }
+  catch (e) {
+    const c = store.get('loc', null);
+    api.note(c ? 'دسترسی لوکیشن نیست · آخرین موقعیت' : 'دسترسی لوکیشن نیست · تهران');
+    return { ...(c || { lat: 35.6892, lon: 51.389 }), approx: true };
+  }
+}
+const KLAT = 110.574, KLON = lat => 111.320 * Math.cos(lat * RAD);
+function hav(a, b, c, d) { const R = 6371, dl = (c - a) * RAD, dn = (d - b) * RAD; const q = Math.sin(dl / 2) ** 2 + Math.cos(a * RAD) * Math.cos(c * RAD) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(q)); }
+function bearing(a, b, c, d) { const y = Math.sin((d - b) * RAD) * Math.cos(c * RAD); const x = Math.cos(a * RAD) * Math.sin(c * RAD) - Math.sin(a * RAD) * Math.cos(c * RAD) * Math.cos((d - b) * RAD); return Math.atan2(y, x); }
+
+/* ============================ ۱) رادار ============================ */
+const AIRLINES = { IRA: 'ایران‌ایر', IRM: 'ماهان', IRC: 'آسمان', IRZ: 'سپاهان', QFZ: 'قشم‌ایر', KIS: 'کیش‌ایر', TBZ: 'تابان', PYA: 'پویا', ATR: 'کاسپین', ZGR: 'زاگرس', VRH: 'وارش', UAE: 'Emirates', QTR: 'Qatar', THY: 'Turkish', FDB: 'flydubai', ETD: 'Etihad', ABY: 'Air Arabia', PGT: 'Pegasus', SVA: 'Saudia', KAC: 'Kuwait', GFA: 'Gulf Air', OMA: 'Oman Air', AIC: 'Air India', DLH: 'Lufthansa', BAW: 'British', AFR: 'Air France', KLM: 'KLM', RYR: 'Ryanair', WZZ: 'Wizz', UAL: 'United', DAL: 'Delta', AAL: 'American', SWR: 'Swiss', AUA: 'Austrian', AZA: 'ITA', ELY: 'El Al', MEA: 'MEA', RJA: 'Royal Jordanian', AXM: 'AirAsia', SIA: 'Singapore', CPA: 'Cathay', PIA: 'PIA', AEE: 'Aegean', UZB: 'Uzbekistan', AHY: 'Azerbaijan', AFL: 'Aeroflot', FIN: 'Finnair', SAS: 'SAS', ETH: 'Ethiopian', EGY: 'EgyptAir', MSR: 'EgyptAir', JAL: 'JAL', ANA: 'ANA', KAL: 'Korean', CCA: 'Air China', CSN: 'China Southern', CES: 'China Eastern' };
+function altColor(ft, ground) { if (ground) return 'hsl(210,10%,60%)'; return `hsl(${40 + clamp(ft / 40000, 0, 1) * 240},100%,${clamp(ft / 40000, 0, 1) > .8 ? 68 : 60}%)`; }
+const PLANE = new Path2D('M0,-10 L1.6,-4 L9,1 L9,3 L1.6,1.2 L1,6 L3.5,8 L3.5,9.5 L0,8.6 L-3.5,9.5 L-3.5,8 L-1,6 L-1.6,1.2 L-9,3 L-9,1 L-1.6,-4 Z');
+const COMPASS = ['شمال', 'شمال‌شرق', 'شرق', 'جنوب‌شرق', 'جنوب', 'جنوب‌غرب', 'غرب', 'شمال‌غرب'];
+const compassFa = deg => COMPASS[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
+
+function radarWidget(root, api) {
+  const cv = mkCanvas(root);
+  const S = { range: store.get('radarRange', 10), loc: null, planes: new Map(), sel: null, sweep: 0, demo: false, busy: false, routes: new Map(), routeFail: 0, wid: null, listOn: true, last: 0 };
+  let dead = false, timers = [], hits = [];
+  seg(api.ctrl, [[10, '۱۰ km'], [20, '۲۰ km'], [50, '۵۰ km'], [100, '۱۰۰ km'], [200, '۲۰۰ km']], S.range, v => { S.range = v; store.set('radarRange', v); if (S.demo) startDemo(true); refresh(); });
+  const stats = panel(root, '', ''); stats.style.cssText = 'left:12px;top:' + (innerWidth < 760 ? 112 : 70) + 'px;direction:rtl;padding:6px 12px';
+  const list = panel(root, 'rlist', '');
+  const selP = panel(root, 'rsel', ''); selP.style.display = 'none';
+  panel(root, 'rleg', '<span>0 ft</span><i></i><span>40000+ ft</span>');
+
+  const rel = (p, now) => {
+    const dt = (now - p.t0) / 1000;
+    const lat = p.lat + p.vy * dt / KLAT, lon = p.lon + p.vx * dt / KLON(p.lat);
+    return { x: (lon - S.loc.lon) * KLON(S.loc.lat) + p.ox, y: (lat - S.loc.lat) * KLAT + p.oy, lat, lon };
+  };
+  async function fetchPlanes() {
+    const nm = Math.min(250, Math.ceil(S.range / 1.852) + 1), la = S.loc.lat.toFixed(4), lo = S.loc.lon.toFixed(4);
+    const j = await firstOk([
+      () => getJSON(`https://api.adsb.lol/v2/point/${la}/${lo}/${nm}`),
+      () => getJSON(`https://api.airplanes.live/v2/point/${la}/${lo}/${nm}`),
+      () => getJSON(`https://opendata.adsb.fi/api/v2/lat/${la}/lon/${lo}/dist/${nm}`)
+    ]);
+    const l = j.ac || j.aircraft; if (!Array.isArray(l)) throw new Error('bad');
+    return l;
+  }
+  function ingest(list, now) {
+    const seen = new Set();
+    for (const a of list) {
+      if (a.lat == null || a.lon == null || !a.hex) continue;
+      const gs = (a.gs || 0) * 1.852 / 3600, tr = (a.track != null ? a.track : (a.true_heading || 0)) * RAD;
+      const p = S.planes.get(a.hex), prev = p ? rel(p, now) : null;
+      const alt = a.alt_baro === 'ground' ? 0 : (typeof a.alt_baro === 'number' ? a.alt_baro : (a.alt_geom || 0));
+      const np = { hex: a.hex, lat: a.lat, lon: a.lon, t0: now - (a.seen_pos || 0) * 1000, vx: gs * Math.sin(tr), vy: gs * Math.cos(tr), ox: 0, oy: 0, cs: (a.flight || '').trim(), alt, ground: a.alt_baro === 'ground', gs: a.gs || 0, track: a.track || 0, type: a.t || '', reg: a.r || '', trail: p ? p.trail : [], lt: p ? p.lt : 0 };
+      if (prev) { const nr = rel(np, now); np.ox = prev.x - nr.x; np.oy = prev.y - nr.y; }
+      S.planes.set(a.hex, np); seen.add(a.hex);
+    }
+    for (const h of [...S.planes.keys()]) if (!seen.has(h)) S.planes.delete(h);
+  }
+  async function loadRoutes(list) {
+    const need = list.filter(p => p.cs && !S.routes.has(p.cs));
+    if (!need.length || Date.now() < S.routeFail) return;
+    need.forEach(p => S.routes.set(p.cs, null));
+    const body = JSON.stringify({ planes: need.slice(0, 100).map(p => ({ callsign: p.cs, lat: p.lat, lng: p.lon })) });
+    try {
+      let j;
+      try { j = await getJSON('https://api.adsb.lol/api/0/routeset', { opts: { method: 'POST', headers: { 'Content-Type': 'application/json' }, body } }); }
+      catch (e) { j = await getJSON('https://api.adsb.lol/api/0/routeset', { opts: { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body } }); }
+      const arr = Array.isArray(j) ? j : (j.routes || []);
+      const got = new Set();
+      arr.forEach(r => {
+        if (!r || !r.callsign) return; got.add(r.callsign);
+        const codes = String(r._airport_codes_iata || r.airport_codes || '').split('-').filter(Boolean);
+        if (codes.length > 1 && codes[0] !== 'unknown') S.routes.set(r.callsign, { codes, ap: r._airports || [] });
+      });
+      need.forEach(p => { if (S.routes.get(p.cs) === null) S.routes.set(p.cs, { none: true }); });
+    } catch (e) { need.forEach(p => S.routes.delete(p.cs)); S.routeFail = Date.now() + 60000; }
+  }
+  const routeOf = p => { const r = S.routes.get(p.cs); if (!r || r.none || !r.codes) return null; const c = r.codes, a = r.ap || []; return { from: c[0], to: c[c.length - 1], fromCity: (a[0] && a[0].location) || '', toCity: (a[a.length - 1] && a[a.length - 1].location) || '' }; };
+  const airline = p => AIRLINES[p.cs.slice(0, 3)] || '';
+
+  function startDemo(force) {
+    if (S.demo && !force) return; S.demo = true; S.planes.clear(); const now = Date.now();
+    const cs = ['IRM1141:IKA-DXB', 'IRA724:THR-MHD', 'THY873:IST-IKA', 'UAE932:DXB-IKA', 'QTR491:DOH-TBZ', 'FDB1062:DXB-SYZ', 'IRC4411:THR-AWZ', 'PGT712:SAW-IKA', 'KIS3302:KIH-THR', 'ABY567:SHJ-IKA'];
+    cs.forEach((s, i) => {
+      const [c, r] = s.split(':'), ang = rnd(0, TAU), d = rnd(.1, 1) * S.range * .95;
+      const lat = S.loc.lat + Math.cos(ang) * d / KLAT, lon = S.loc.lon + Math.sin(ang) * d / KLON(S.loc.lat);
+      const alt = [2500, 7000, 12000, 21000, 28000, 33000, 36000, 38500, 4500, 24000][i];
+      S.planes.set('d' + i, { hex: 'd' + i, lat, lon, t0: now, vx: 0, vy: 0, ox: 0, oy: 0, cs: c, alt, ground: false, gs: rnd(220, 480), track: rnd(0, 360), type: ['A320', 'B738', 'A333', 'B77W', 'A321'][i % 5], reg: 'DEMO', trail: [], lt: 0 });
+      const p = S.planes.get('d' + i), g = p.gs * 1.852 / 3600, tr = p.track * RAD; p.vx = g * Math.sin(tr); p.vy = g * Math.cos(tr);
+      const [a, b] = r.split('-'); S.routes.set(c, { codes: [a, b], ap: [{ location: a }, { location: b }] });
+    });
+    api.status('دمو · داده زنده در دسترس نیست', 'warn');
+  }
+  async function refresh() {
+    if (S.busy || !S.loc || dead) return; S.busy = true;
+    try {
+      const list = await fetchPlanes(); if (dead) return;
+      if (S.demo) { S.planes.clear(); S.demo = false; }
+      ingest(list, Date.now()); S.last = Date.now();
+      api.status('زنده', 'ok'); loadRoutes([...S.planes.values()]);
+    } catch (e) { if (!dead) { if (!S.planes.size || S.demo) startDemo(); else api.status('خطای شبکه · تلاش مجدد', 'err'); } }
+    S.busy = false;
+  }
+  (async () => {
+    api.status('گرفتن لوکیشن…', 'warn');
+    const l = await ensureLoc(api); if (dead) return; S.loc = { lat: l.lat, lon: l.lon };
+    if (!l.approx && navigator.geolocation) S.wid = navigator.geolocation.watchPosition(p => { S.loc = { lat: p.coords.latitude, lon: p.coords.longitude }; store.set('loc', S.loc); }, () => { }, { enableHighAccuracy: true, maximumAge: 4000 });
+    await refresh(); timers.push(setInterval(refresh, CONFIG.radarRefreshSec * 1000));
+  })();
+
+  cv.c.addEventListener('pointerdown', e => {
+    const r = cv.c.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top; let best = null, bd = 34;
+    for (const h of hits) { const d = Math.hypot(h.x - mx, h.y - my); if (d < bd) { bd = d; best = h.p; } }
+    S.sel = best ? best.hex : null; updateUI();
+  });
+  list.addEventListener('click', e => { const r = e.target.closest('[data-h]'); if (r) { S.sel = r.dataset.h; updateUI(); } });
+
+  function updateUI() {
+    if (!S.loc) return; const now = Date.now(), arr = [];
+    for (const p of S.planes.values()) { const r = rel(p, now), d = Math.hypot(r.x, r.y); if (d <= S.range) arr.push({ p, d, r }); }
+    arr.sort((a, b) => a.d - b.d);
+    stats.innerHTML = `<b style="font-size:22px">✈ ${nf(arr.length)}</b> هواپیما<br><span class="dim">شعاع ${nf(S.range)} کیلومتر</span>${S.demo ? '<br><span style="color:#ffc04d">حالت دمو</span>' : ''}`;
+    list.innerHTML = '<div class="dim" style="margin-bottom:4px">نزدیک‌ترین‌ها</div>' + (arr.slice(0, 12).map(({ p, d }) => { const ro = routeOf(p); return `<div class="rrow ${p.hex === S.sel ? 'sel' : ''}" data-h="${p.hex}"><span><i style="background:${altColor(p.alt, p.ground)}"></i>${p.cs || p.hex}</span><span class="dim">${ro ? '→ ' + ro.to : ''} · ${nf(d, 1)}km</span></div>`; }).join('') || '<div class="dim">هواپیمایی بالای سرت نیست</div>');
+    const s = arr.find(a => a.p.hex === S.sel);
+    if (!s) { selP.style.display = 'none'; return; }
+    const { p, d, r } = s, ro = routeOf(p), br = (Math.atan2(r.x, r.y) / RAD + 360) % 360;
+    selP.style.display = 'block'; selP.style.direction = 'rtl';
+    selP.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:20px;direction:ltr">${p.cs || p.hex}</b><span class="dim">${airline(p)}</span></div>
+      <div style="font-size:15px;direction:ltr;text-align:right">${ro ? `<b>${ro.from}</b> ${ro.fromCity ? '<span class="dim">' + ro.fromCity + '</span>' : ''} → <b style="color:#5dffb0">${ro.to}</b> ${ro.toCity ? '<span class="dim">' + ro.toCity + '</span>' : ''}` : '<span class="dim">مسیر نامشخص</span>'}</div>
+      ارتفاع: <b>${nf(p.alt)}</b> ft (${nf(p.alt * .3048)} m)<br>سرعت: <b>${nf(p.gs * 1.852)}</b> km/h · جهت: <b>${nf(p.track)}°</b> ${compassFa(p.track)}<br>فاصله از تو: <b>${nf(d, 1)}</b> km (سمت ${compassFa(br)})${p.type ? `<br><span class="dim">${p.type} ${p.reg}</span>` : ''}`;
+  }
+  timers.push(setInterval(updateUI, 800));
+
+  const stop = loop((dt, t) => {
+    const w = cv.w, h = cv.h, x = cv.begin(); x.clearRect(0, 0, w, h); x.direction = 'ltr';
+    const bg = x.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * .7); bg.addColorStop(0, '#062a24'); bg.addColorStop(.6, '#03120f'); bg.addColorStop(1, '#010605'); x.fillStyle = bg; x.fillRect(0, 0, w, h);
+    const wide = w >= 900, top = 66, bot = w < 760 ? 120 : 52;
+    const R = Math.max(60, Math.min(wide ? w - 600 : w - 18, h - top - bot) / 2), cx = w / 2, cy = top + (h - top - bot) / 2;
+    if (!S.loc) { x.fillStyle = '#5dffb0'; x.font = '700 18px Vazirmatn,Tahoma'; x.textAlign = 'center'; x.fillText('در حال گرفتن موقعیت…', cx, cy); return; }
+    const G = '39,255,176';
+    // disc
+    x.save(); x.beginPath(); x.arc(cx, cy, R, 0, TAU); x.clip();
+    const dg = x.createRadialGradient(cx, cy, 0, cx, cy, R); dg.addColorStop(0, 'rgba(0,70,55,.55)'); dg.addColorStop(1, 'rgba(0,30,24,.75)'); x.fillStyle = dg; x.fillRect(cx - R, cy - R, R * 2, R * 2);
+    // grid
+    x.strokeStyle = `rgba(${G},.22)`; x.lineWidth = 1;
+    for (let i = 1; i <= 4; i++) { x.beginPath(); x.arc(cx, cy, R * i / 4, 0, TAU); x.stroke(); }
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); x.stroke(); }
+    // sweep
+    S.sweep = (S.sweep + dt * 1.15) % TAU;
+    if (x.createConicGradient) {
+      const trail = 1.1, g = x.createConicGradient(S.sweep - trail, cx, cy), f = trail / TAU;
+      g.addColorStop(0, `rgba(${G},0)`); g.addColorStop(f, `rgba(${G},.42)`); g.addColorStop(Math.min(1, f + .0008), `rgba(${G},0)`); g.addColorStop(1, `rgba(${G},0)`);
+      x.fillStyle = g; x.fillRect(cx - R, cy - R, R * 2, R * 2);
+    }
+    x.strokeStyle = `rgba(${G},.95)`; x.lineWidth = 2; x.shadowColor = `rgb(${G})`; x.shadowBlur = 12; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(S.sweep) * R, cy + Math.sin(S.sweep) * R); x.stroke(); x.shadowBlur = 0;
+    x.restore();
+    // rim & ticks
+    x.strokeStyle = `rgba(${G},.8)`; x.lineWidth = 2; x.beginPath(); x.arc(cx, cy, R, 0, TAU); x.stroke();
+    for (let d = 0; d < 360; d += 5) { const a = (d - 90) * RAD, l = d % 30 === 0 ? 12 : 6; x.strokeStyle = `rgba(${G},${d % 30 === 0 ? .9 : .5})`; x.lineWidth = 1; x.beginPath(); x.moveTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); x.lineTo(cx + Math.cos(a) * (R + l), cy + Math.sin(a) * (R + l)); x.stroke(); }
+    x.font = `700 ${clamp(R / 18, 11, 17)}px Vazirmatn,Tahoma`; x.textAlign = 'center'; x.textBaseline = 'middle';
+    [['N', 0, '#ff6b6b'], ['E', 90], ['S', 180], ['W', 270]].forEach(([l, d, c]) => { const a = (d - 90) * RAD; x.fillStyle = c || `rgb(${G})`; x.fillText(l, cx + Math.cos(a) * (R + 26), cy + Math.sin(a) * (R + 26)); });
+    x.font = `600 ${clamp(R / 26, 9, 13)}px Vazirmatn,Tahoma`; x.fillStyle = `rgba(${G},.75)`; x.textAlign = 'left';
+    for (let i = 1; i <= 4; i++) { const a = -Math.PI / 4, rr = R * i / 4; x.fillText((S.range * i / 4) + ' km', cx + Math.cos(a) * rr + 4, cy + Math.sin(a) * rr - 4); }
+    // planes
+    const now = Date.now(), k = R / S.range; hits = [];
+    const fs = clamp(R / 28, 10.5, 15);
+    const vis = [];
+    for (const p of S.planes.values()) {
+      const r = rel(p, now); p.ox *= Math.exp(-dt * 2); p.oy *= Math.exp(-dt * 2);
+      const d = Math.hypot(r.x, r.y); if (d > S.range * 1.02) continue;
+      if (now - p.lt > 1500) { p.lt = now; p.trail.push([r.lat, r.lon]); if (p.trail.length > 24) p.trail.shift(); }
+      vis.push({ p, r, sx: cx + r.x * k, sy: cy - r.y * k });
+    }
+    for (const { p, sx, sy } of vis) {
+      if (p.trail.length > 1) {
+        x.beginPath(); p.trail.forEach(([la, lo], i) => { const px = cx + (lo - S.loc.lon) * KLON(S.loc.lat) * k, py = cy - (la - S.loc.lat) * KLAT * k; i ? x.lineTo(px, py) : x.moveTo(px, py); });
+        x.lineTo(sx, sy); x.strokeStyle = altColor(p.alt, p.ground).replace('hsl', 'hsla').replace(')', ',.35)'); x.lineWidth = 2; x.stroke();
+      }
+    }
+    for (const { p, r, sx, sy } of vis) {
+      const ang = Math.atan2(sy - cy, sx - cx), diff = (((S.sweep - ang) % TAU) + TAU) % TAU, glow = Math.exp(-diff * .9);
+      const col = altColor(p.alt, p.ground), sel = p.hex === S.sel;
+      hits.push({ x: sx, y: sy, p });
+      x.save(); x.translate(sx, sy); x.globalAlpha = .6 + .4 * glow; x.shadowColor = col; x.shadowBlur = 6 + 22 * glow;
+      if (sel) { x.save(); x.strokeStyle = '#fff'; x.lineWidth = 1.5; x.setLineDash([4, 4]); x.beginPath(); x.arc(0, 0, 19 + Math.sin(t * 5) * 2, 0, TAU); x.stroke(); x.restore(); }
+      x.rotate(p.track * RAD); const sc = clamp(R / 190, .9, 1.7) * (sel ? 1.2 : 1); x.scale(sc, sc); x.fillStyle = col; x.fill(PLANE); x.restore();
+      x.shadowBlur = 0; x.globalAlpha = .55 + .45 * Math.max(glow, sel ? 1 : 0);
+      x.textAlign = 'left'; x.textBaseline = 'alphabetic'; x.font = `700 ${fs}px ui-monospace,Menlo,Consolas,monospace`; x.fillStyle = '#eafff6';
+      const lx = sx + 15, flip = lx > cx + R * .6 ? -1 : 1, ax = flip < 0 ? sx - 15 : lx; x.textAlign = flip < 0 ? 'right' : 'left';
+      x.fillText(p.cs || p.hex.toUpperCase(), ax, sy - 2);
+      const ro = routeOf(p); x.font = `${fs - 1}px ui-monospace,Menlo,Consolas,monospace`; x.fillStyle = col;
+      x.fillText((ro ? '→ ' + ro.to + (ro.toCity ? ' ' + ro.toCity : '') : '') + (ro ? ' · ' : '') + (p.ground ? 'GND' : 'FL' + String(Math.round(p.alt / 100)).padStart(3, '0')), ax, sy + fs);
+      x.globalAlpha = 1;
+    }
+    // you
+    const pu = (t * .9) % 1; x.strokeStyle = `rgba(80,200,255,${1 - pu})`; x.lineWidth = 2; x.beginPath(); x.arc(cx, cy, 6 + pu * 26, 0, TAU); x.stroke();
+    x.fillStyle = '#4dd2ff'; x.shadowColor = '#4dd2ff'; x.shadowBlur = 16; x.beginPath(); x.arc(cx, cy, 5.5, 0, TAU); x.fill(); x.shadowBlur = 0;
+  });
+  return () => { dead = true; stop(); cv.destroy(); timers.forEach(clearInterval); if (S.wid != null) navigator.geolocation.clearWatch(S.wid); };
+}
+
+/* ============================ ۲) شیشه دلار ============================ */
+const RC = 3.0, BW = 9.8, BH = 5.0;
+function jarWidget(root, api) {
+  const cv = mkCanvas(root);
+  const S = { price: null, first: null, shown: null, cap: store.get('jarCap', null), items: [], parts: [], queue: [], floats: [], demo: false, live: null, shake: 0, flash: 0, flashCol: '60,255,140', next: 1, pct: 0, delta: 0, N: 68, t: 0, spawnT: 0, lastGood: store.get('jarLast', null) };
+  let u = 8, G = {}, spr = {}, dead = false, timers = [];
+  const info = panel(root, 'jinfo', `<div>آپدیت بعدی تا <b id="jn">۱۰</b> ثانیه</div><div class="jbar"><i id="jb"></i></div><div class="dim">🪙 رشد کم · 💵 رشد زیاد · 🔥 ریزش (اسکناس = تغییر بزرگ)</div>`);
+  const jn = $('#jn', info), jb = $('#jb', info);
+  const lab = document.createElement('span'); lab.className = 'lbl'; lab.textContent = 'ظرفیت شیشه (تومان):'; api.ctrl.appendChild(lab);
+  const capIn = document.createElement('input'); capIn.type = 'number'; capIn.className = 'num'; capIn.step = 1000; capIn.placeholder = 'خودکار'; if (S.cap) capIn.value = S.cap; api.ctrl.appendChild(capIn);
+  capIn.onchange = () => { const v = +capIn.value; if (v > 0) { S.cap = v; store.set('jarCap', v); resync(); } };
+  const demoBtns = document.createElement('span'); api.ctrl.appendChild(demoBtns);
+
+  function layout() {
+    const w = cv.w, h = cv.h; u = Math.min(h / 100, w / 64);
+    G.cx = w / 2; G.W = 46 * u; G.bottom = h * .5 + 36 * u; G.top = G.bottom - 62 * u; G.L = G.cx - G.W / 2 + 1.4 * u; G.R = G.cx + G.W / 2 - 1.4 * u; G.floor = G.bottom - 1.8 * u;
+    makeSprites();
+  }
+  function makeSprites() {
+    const d = cv.dpr, mk = (w, h, fn) => { const c = document.createElement('canvas'); c.width = Math.ceil(w * d); c.height = Math.ceil(h * d); const g = c.getContext('2d'); g.scale(d, d); fn(g, w, h); return { c, w, h }; };
+    const rc = RC * u;
+    spr.coin = mk(rc * 2 + 4, rc * 2 + 4, (g, w, h) => {
+      const cx = w / 2, cy = h / 2, gr = g.createRadialGradient(cx - rc * .35, cy - rc * .4, rc * .1, cx, cy, rc); gr.addColorStop(0, '#fff6b8'); gr.addColorStop(.5, '#f7c53a'); gr.addColorStop(1, '#b97a10');
+      g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, rc, 0, TAU); g.fill(); g.strokeStyle = '#8a5a08'; g.lineWidth = u * .28; g.stroke();
+      g.strokeStyle = 'rgba(255,240,170,.8)'; g.lineWidth = u * .2; g.beginPath(); g.arc(cx, cy, rc * .74, 0, TAU); g.stroke();
+      g.fillStyle = '#8a5a08'; g.font = `900 ${rc * 1.25}px Georgia,serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', cx, cy + rc * .06);
+    });
+    const bw = BW * u, bh = BH * u;
+    spr.bill = mk(bw + 4, bh + 4, (g, w, h) => {
+      const a = 2, gr = g.createLinearGradient(0, a, 0, a + bh); gr.addColorStop(0, '#9be3a1'); gr.addColorStop(1, '#3fa35c');
+      rrect(g, a, a, bw, bh, u * .5); g.fillStyle = gr; g.fill(); g.strokeStyle = '#1e6b3a'; g.lineWidth = u * .28; g.stroke();
+      g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = u * .18; rrect(g, a + u * .6, a + u * .6, bw - u * 1.2, bh - u * 1.2, u * .3); g.stroke();
+      g.fillStyle = 'rgba(255,255,255,.3)'; g.beginPath(); g.ellipse(w / 2, h / 2, bh * .33, bh * .33, 0, 0, TAU); g.fill();
+      g.fillStyle = '#17582f'; g.font = `900 ${bh * .62}px Georgia,serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('$', w / 2, h / 2 + bh * .03);
+      g.font = `700 ${bh * .22}px Georgia,serif`; g.fillText('100', a + u * 1.5, a + u * 1); g.fillText('100', a + bw - u * 1.5, a + bh - u * 1);
+    });
+    const glow = (stops, s = 64) => mk(s, s, (g) => { const gr = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2); stops.forEach(([o, c]) => gr.addColorStop(o, c)); g.fillStyle = gr; g.fillRect(0, 0, s, s); });
+    spr.fire1 = glow([[0, 'rgba(255,250,200,1)'], [.3, 'rgba(255,190,60,.8)'], [1, 'rgba(255,90,0,0)']]);
+    spr.fire2 = glow([[0, 'rgba(255,140,40,.95)'], [.5, 'rgba(230,50,10,.5)'], [1, 'rgba(120,0,0,0)']]);
+    spr.smoke = glow([[0, 'rgba(60,60,60,.55)'], [1, 'rgba(30,30,30,0)']]);
+    spr.gold = glow([[0, 'rgba(255,245,170,1)'], [.4, 'rgba(255,200,60,.6)'], [1, 'rgba(255,180,0,0)']], 32);
+  }
+  cv.onresize = () => { const oldCx = G.cx; layout(); };
+  layout();
+
+  /* منطق آیتم‌ها */
+  function spawn(type, delay) { S.queue.push({ type, t: delay || 0 }); }
+  function realSpawn(type) {
+    if (S.items.length > S.N * 1.45) return;
+    S.items.push({ x: G.cx + rnd(-.3, .3) * G.W, y: G.top - rnd(14, 22) * u, vx: rnd(-6, 6) * u, vy: 10 * u, r: (type === 'bill' ? 3.5 : RC) * u, a: rnd(0, TAU), va: rnd(-7, 7), type, seed: rnd(0, 100), burn: 0, burnAt: 0 });
+  }
+  const liveCount = () => S.items.filter(i => !i.burn && !i.burnAt).length + S.queue.length;
+  function burn(kind, n) {
+    for (let i = 0; i < n; i++) {
+      let pool = S.items.filter(it => !it.burn && !it.burnAt && (kind === 'any' || it.type === kind));
+      if (!pool.length) pool = S.items.filter(it => !it.burn && !it.burnAt); if (!pool.length) return;
+      pool.sort((a, b) => a.y - b.y); const it = pool[Math.min(pool.length - 1, Math.floor(Math.random() * 3))];
+      it.burnAt = S.t + i * .16 + .02;
+    }
+  }
+  function fillInitial() { const n = Math.round(S.price / S.cap * S.N); for (let i = 0; i < n; i++) spawn(Math.random() < .62 ? 'coin' : 'bill', i * .035); }
+  function resync() { if (S.price == null) return; const diff = Math.round(S.price / S.cap * S.N) - liveCount(); if (diff > 0) for (let i = 0; i < diff; i++) spawn(Math.random() < .62 ? 'coin' : 'bill', i * .04); else burn('any', -diff); }
+  function onPrice(p) {
+    if (S.price == null) {
+      S.price = p; S.first = p; S.shown = p;
+      if (!S.cap) { S.cap = Math.ceil(p * 1.12 / 1000) * 1000; store.set('jarCap', S.cap); }
+      capIn.value = S.cap; fillInitial(); return;
+    }
+    if (p === S.price) return;
+    const prev = S.price, delta = p - prev, pct = delta / prev * 100, a = Math.abs(pct), big = a >= .6, huge = a >= 2;
+    S.price = p; S.pct = pct; S.delta = delta;
+    const diff = Math.round(p / S.cap * S.N) - liveCount();
+    S.floats.push({ t: 0, text: (delta > 0 ? '▲ +' : '▼ −') + nf(Math.abs(delta)), col: delta > 0 ? '#5dffb0' : '#ff6b6b', big: huge });
+    S.flash = 1; S.flashCol = delta > 0 ? '60,255,140' : '255,70,40';
+    if (delta > 0) {
+      let n = Math.max(diff > 0 ? diff : 0, 1); if (huge) n = Math.max(n, Math.min(12, Math.ceil(a) * 2 + 2)); else if (big) n = Math.max(n, 2);
+      n = Math.min(n, 16); for (let i = 0; i < n; i++) spawn(big ? 'bill' : 'coin', i * .13);
+      if (huge) { S.shake = 4; }
+    } else {
+      let n = Math.max(diff < 0 ? -diff : 0, 1); if (huge) n = Math.max(n, Math.min(14, Math.ceil(a) * 2 + 2)); else if (big) n = Math.max(n, 2);
+      burn(big ? 'bill' : 'coin', Math.min(n, 16)); if (huge) S.shake = 9; else if (big) S.shake = 3;
+    }
+  }
+
+  /* قیمت */
+  async function fetchDollar() {
+    if (CONFIG.customDollarFetch) return await CONFIG.customDollarFetch();
+    const src = 'https://call4.tgju.org/ajax.json';
+    const parse = j => { const p = j && j.current && j.current.price_dollar_rl && j.current.price_dollar_rl.p; const v = Math.round(Number(String(p).replace(/[,٬\s]/g, '')) / 10); if (!v || isNaN(v)) throw new Error('bad'); return v; };
+    return await firstOk([
+      () => getJSON(src).then(parse),
+      () => getJSON('https://api.allorigins.win/raw?url=' + encodeURIComponent(src)).then(parse),
+      () => getJSON('https://corsproxy.io/?' + encodeURIComponent(src)).then(parse)
+    ]);
+  }
+  let demoP = null;
+  function demoNext() {
+    if (demoP == null) demoP = S.lastGood || 270000; const r = Math.random(); let pct;
+    if (r < .55) pct = rnd(-.35, .4); else if (r < .8) pct = rnd(-1.4, 1.5); else pct = (Math.random() < .5 ? -1 : 1) * rnd(2.2, 4);
+    demoP = Math.max(1000, Math.round(demoP * (1 + pct / 100) / 10) * 10); return demoP;
+  }
+  async function poll() {
+    if (dead) return;
+    try {
+      const p = await fetchDollar(); if (dead) return;
+      if (S.demo || S.live === null) { if (S.demo) { S.items = []; S.queue = []; S.price = null; } }
+      S.demo = false; S.live = true; S.lastGood = p; store.set('jarLast', p); api.status('زنده · TGJU', 'ok'); demoBtns.innerHTML = ''; onPrice(p);
+    } catch (e) {
+      if (dead) return;
+      if (!S.demo) { S.demo = true; S.live = false; if (S.price != null && S.lastGood == null) { S.items = []; S.queue = []; S.price = null; } demoP = null; showDemoBtns(); }
+      api.status('دمو · منبع قیمت در دسترس نیست', 'warn'); onPrice(demoNext());
+    }
+    S.next = CONFIG.dollarRefreshSec; S.cd = S.next;
+  }
+  function showDemoBtns() {
+    demoBtns.innerHTML = ''; btn(demoBtns, '⬆ جهش', () => { demoP = Math.round(demoP * 1.03); onPrice(demoP); }); btn(demoBtns, '⬇ ریزش', () => { demoP = Math.round(demoP * .965); onPrice(demoP); });
+    btn(demoBtns, '▼ کم', () => { demoP = Math.round(demoP * .997); onPrice(demoP); }); btn(demoBtns, '▲ کم', () => { demoP = Math.round(demoP * 1.003); onPrice(demoP); });
+  }
+  S.cd = 0; poll(); timers.push(setInterval(poll, CONFIG.dollarRefreshSec * 1000));
+
+  /* فیزیک */
+  function physics(dt) {
+    const sub = 2, h = dt / sub, g = 250 * u;
+    const act = S.items.filter(i => !i.burn);
+    for (let s = 0; s < sub; s++) {
+      for (const it of act) {
+        it.vy += g * h;
+        if (it.type === 'bill') { if (it.vy > 45 * u) it.vy *= .955; it.vx += Math.sin(S.t * 6 + it.seed) * 70 * u * h * (it.vy > 12 * u ? 1 : 0); }
+        it.vx *= .999; it.x += it.vx * h; it.y += it.vy * h; it.a += it.va * h;
+        const sp = Math.hypot(it.vx, it.vy);
+        if (sp < 25 * u) { it.va *= .9; if (it.type === 'bill') { const tgt = Math.round(it.a / Math.PI) * Math.PI + Math.sin(it.seed) * .35; it.a += (tgt - it.a) * Math.min(1, h * 5); } }
+        const r = it.r;
+        if (it.y > G.top) { if (it.x < G.L) { if (it.x > G.L - r) { it.x = G.L - r; it.vx = Math.min(it.vx, 0) * .3; } } else if (it.x > G.R) { if (it.x < G.R + r) { it.x = G.R + r; it.vx = Math.max(it.vx, 0) * .3; } } else { if (it.x < G.L + r) { it.x = G.L + r; it.vx = Math.max(it.vx, 0) * .3; } if (it.x > G.R - r) { it.x = G.R - r; it.vx = Math.min(it.vx, 0) * .3; } } }
+        const fy = (it.x > G.L && it.x < G.R) ? G.floor : G.bottom;
+        if (it.y + r > fy) { it.y = fy - r; if (it.vy > 30 * u && it.type === 'coin' && !it.hit) { it.hit = 1; S.parts.push({ k: 'g', x: it.x, y: it.y - r, vx: 0, vy: -5 * u, life: 0, max: .45, r: 3.2 * u }); } it.vy *= -.12; it.vx *= .88; it.va *= .8; }
+        if (it.x < it.r) { it.x = it.r; it.vx = Math.abs(it.vx) * .4; } if (it.x > cv.w - it.r) { it.x = cv.w - it.r; it.vx = -Math.abs(it.vx) * .4; }
+      }
+      for (let k = 0; k < 2; k++) for (let i = 0; i < act.length; i++) {
+        const a = act[i];
+        for (let j = i + 1; j < act.length; j++) {
+          const b = act[j], dx = b.x - a.x, dy = b.y - a.y, rr = (a.r + b.r) * .96;
+          if (dx > rr || dx < -rr || dy > rr || dy < -rr) continue;
+          const d2 = dx * dx + dy * dy; if (d2 >= rr * rr || d2 < .0001) continue;
+          const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, ov = (rr - d) * .45;
+          a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
+          const vn = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+          if (vn < 0) { const jn = -vn * .55; a.vx -= nx * jn; a.vy -= ny * jn; b.vx += nx * jn; b.vy += ny * jn; const tx = -ny, ty = nx, vt = (b.vx - a.vx) * tx + (b.vy - a.vy) * ty, jt = vt * .12; a.vx += tx * jt; a.vy += ty * jt; b.vx -= tx * jt; b.vy -= ty * jt; }
+        }
+      }
+    }
+  }
+  function updateItems(dt) {
+    S.spawnT += dt;
+    for (let i = S.queue.length - 1; i >= 0; i--) { const q = S.queue[i]; q.t -= dt; if (q.t <= 0) { realSpawn(q.type); S.queue.splice(i, 1); } }
+    for (const it of S.items) {
+      if (!it.burn && it.burnAt && S.t >= it.burnAt) { it.burn = .001; it.vx = it.vy = 0; }
+      if (it.burn) {
+        it.burn += dt / (it.type === 'bill' ? 1.1 : .8);
+        const n = it.type === 'bill' ? 3 : 2; for (let k = 0; k < n; k++) S.parts.push({ k: 'f', x: it.x + rnd(-1, 1) * it.r, y: it.y + rnd(-.8, .6) * it.r, vx: rnd(-5, 5) * u, vy: -rnd(14, 34) * u, life: 0, max: rnd(.45, .95), r: (it.type === 'bill' ? 3.4 : 2.4) * u * rnd(.7, 1.4) });
+        if (Math.random() < .3) S.parts.push({ k: 's', x: it.x, y: it.y - it.r, vx: rnd(-4, 4) * u, vy: -rnd(8, 16) * u, life: 0, max: rnd(.8, 1.5), r: 3 * u });
+        if (Math.random() < .5) S.parts.push({ k: 'e', x: it.x, y: it.y, vx: rnd(-14, 14) * u, vy: -rnd(18, 45) * u, life: 0, max: rnd(.5, 1.1), r: .5 * u });
+      }
+    }
+    S.items = S.items.filter(it => it.burn < 1);
+    for (const p of S.parts) { p.life += dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.k === 's') p.vy -= 2 * u * dt; if (p.k === 'e') p.vy += 10 * u * dt; if (p.k === 'f') p.vx += Math.sin(S.t * 8 + p.x) * 3 * u * dt; }
+    S.parts = S.parts.filter(p => p.life < p.max); if (S.parts.length > 500) S.parts.splice(0, S.parts.length - 500);
+  }
+
+  function drawJar(x, front) {
+    const L = G.cx - G.W / 2, R = G.cx + G.W / 2, top = G.top, bot = G.bottom, rr = 8 * u;
+    const path = () => { x.beginPath(); x.moveTo(L, top); x.lineTo(L, bot - rr); x.quadraticCurveTo(L, bot, L + rr, bot); x.lineTo(R - rr, bot); x.quadraticCurveTo(R, bot, R, bot - rr); x.lineTo(R, top); };
+    if (!front) { path(); x.closePath(); const g = x.createLinearGradient(L, 0, R, 0); g.addColorStop(0, 'rgba(160,210,255,.10)'); g.addColorStop(.5, 'rgba(120,180,255,.03)'); g.addColorStop(1, 'rgba(160,210,255,.10)'); x.fillStyle = g; x.fill(); return; }
+    path(); x.closePath(); const dg = x.createLinearGradient(L, top, R, bot); dg.addColorStop(0, 'rgba(255,255,255,.13)'); dg.addColorStop(.35, 'rgba(255,255,255,.015)'); dg.addColorStop(1, 'rgba(255,255,255,.06)'); x.fillStyle = dg; x.fill();
+    path(); x.strokeStyle = 'rgba(210,235,255,.55)'; x.lineWidth = u * .5; x.stroke();
+    x.strokeStyle = 'rgba(210,235,255,.18)'; x.lineWidth = u * 1.2; x.beginPath(); x.moveTo(L + u * 1.4, bot - rr); x.quadraticCurveTo(L + u * 1.4, bot - u * 1.4, L + rr, bot - u * 1.4); x.lineTo(R - rr, bot - u * 1.4); x.quadraticCurveTo(R - u * 1.4, bot - u * 1.4, R - u * 1.4, bot - rr); x.stroke();
+    rrect(x, L - 1.6 * u, top - 2.4 * u, G.W + 3.2 * u, 3.4 * u, 1.6 * u); x.fillStyle = 'rgba(200,230,255,.18)'; x.fill(); x.strokeStyle = 'rgba(230,245,255,.6)'; x.lineWidth = u * .4; x.stroke();
+    x.fillStyle = 'rgba(255,255,255,.3)'; rrect(x, L + 2.2 * u, top + 6 * u, 1.5 * u, 36 * u, .75 * u); x.fill(); rrect(x, L + 2.2 * u, top + 45 * u, 1.5 * u, 4 * u, .75 * u); x.fill();
+    x.fillStyle = 'rgba(255,255,255,.14)'; rrect(x, R - 3.6 * u, top + 8 * u, 1 * u, 22 * u, .5 * u); x.fill();
+  }
+  function drawLabel(x) {
+    const w = 37 * u, h = 27 * u, px = G.cx - w / 2, py = G.top + 17 * u, up = S.pct >= 0;
+    rrect(x, px, py, w, h, 3 * u); const g = x.createLinearGradient(0, py, 0, py + h); g.addColorStop(0, 'rgba(8,14,26,.74)'); g.addColorStop(1, 'rgba(6,10,20,.66)'); x.fillStyle = g; x.fill(); x.strokeStyle = 'rgba(255,255,255,.28)'; x.lineWidth = u * .3; x.stroke();
+    x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#9fb2d6'; x.font = `700 ${2.5 * u}px Vazirmatn,Tahoma,sans-serif`; x.fillText('دلار آمریکا  ·  USD', G.cx, py + 3.4 * u);
+    const s = nf(Math.round(S.shown || 0)); let fz = 8 * u; x.font = `900 ${fz}px Vazirmatn,Tahoma,sans-serif`; const mw = x.measureText(s).width; if (mw > w * .88) { fz *= w * .88 / mw; x.font = `900 ${fz}px Vazirmatn,Tahoma,sans-serif`; }
+    x.shadowColor = up ? 'rgba(80,255,160,.6)' : 'rgba(255,90,60,.6)'; x.shadowBlur = u * 2; x.fillStyle = '#fff'; x.fillText(s, G.cx, py + 11.8 * u); x.shadowBlur = 0;
+    x.fillStyle = '#ffd36b'; x.font = `700 ${2.8 * u}px Vazirmatn,Tahoma,sans-serif`; x.fillText('تومان', G.cx, py + 17.4 * u);
+    if (S.price != null) {
+      const col = S.pct === 0 ? '#9fb2d6' : up ? '#5dffb0' : '#ff7a6b'; x.fillStyle = col; x.font = `900 ${3.3 * u}px Vazirmatn,Tahoma,sans-serif`;
+      x.fillText(S.pct === 0 ? '— بدون تغییر' : (up ? '▲ ' : '▼ ') + nf(Math.abs(S.pct), 2) + '٪  (' + (up ? '+' : '−') + nf(Math.abs(S.delta)) + ')', G.cx, py + 21.6 * u);
+      const tot = (S.price - S.first) / S.first * 100; x.fillStyle = '#7f90b3'; x.font = `600 ${2.1 * u}px Vazirmatn,Tahoma,sans-serif`; x.fillText('از شروع: ' + (tot >= 0 ? '+' : '−') + nf(Math.abs(tot), 2) + '٪', G.cx, py + 24.9 * u);
+    }
+  }
+  const sprite = (x, s, cx, cy, ang, sc = 1, al = 1) => { x.save(); x.translate(cx, cy); x.rotate(ang); x.scale(sc, sc); x.globalAlpha = al; x.drawImage(s.c, -s.w / 2, -s.h / 2, s.w, s.h); x.restore(); };
+
+  const stop = loop((dt, t) => {
+    S.t += dt; const w = cv.w, h = cv.h, x = cv.begin(); x.clearRect(0, 0, w, h);
+    if (S.shown != null && S.price != null) S.shown += (S.price - S.shown) * (1 - Math.exp(-dt * 5));
+    S.cd -= dt; if (jn) { jn.textContent = nf(Math.max(0, Math.ceil(S.cd))); jb.style.width = clamp(100 - S.cd / CONFIG.dollarRefreshSec * 100, 0, 100) + '%'; }
+    updateItems(dt); physics(dt);
+    // bg
+    const bg = x.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, '#070b18'); bg.addColorStop(1, '#0d1424'); x.fillStyle = bg; x.fillRect(0, 0, w, h);
+    S.flash = Math.max(0, S.flash - dt * 1.1);
+    const hg = x.createRadialGradient(G.cx, G.top + 30 * u, 0, G.cx, G.top + 30 * u, 60 * u); hg.addColorStop(0, `rgba(${S.flashCol},${.1 + S.flash * .38})`); hg.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = hg; x.fillRect(0, 0, w, h);
+    S.shake *= Math.pow(.02, dt); const sx = (Math.random() - .5) * S.shake * u * .35, sy = (Math.random() - .5) * S.shake * u * .25;
+    x.save(); x.translate(sx, sy);
+    // shelf
+    const sg = x.createLinearGradient(0, G.bottom, 0, G.bottom + 6 * u); sg.addColorStop(0, '#2a3552'); sg.addColorStop(1, '#10162a'); rrect(x, G.cx - 38 * u, G.bottom, 76 * u, 3.6 * u, u); x.fillStyle = sg; x.fill();
+    x.fillStyle = 'rgba(255,255,255,.1)'; x.fillRect(G.cx - 37 * u, G.bottom, 74 * u, u * .25);
+    const shg = x.createRadialGradient(G.cx, G.bottom + 6 * u, 0, G.cx, G.bottom + 6 * u, 30 * u); shg.addColorStop(0, 'rgba(0,0,0,.5)'); shg.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = shg; x.fillRect(G.cx - 32 * u, G.bottom + 2 * u, 64 * u, 8 * u);
+    drawJar(x, false);
+    for (const it of S.items) {
+      const sc = it.burn ? 1 - it.burn * .35 : 1; sprite(x, spr[it.type], it.x, it.y, it.a, sc, it.burn ? 1 - it.burn * .6 : 1);
+      if (it.burn) { x.save(); x.translate(it.x, it.y); x.rotate(it.a); x.globalAlpha = Math.min(.85, it.burn * 1.4); x.fillStyle = '#1a0a02'; if (it.type === 'bill') rrect(x, -BW / 2 * u, -BH / 2 * u, BW * u, BH * u, .5 * u); else { x.beginPath(); x.arc(0, 0, RC * u, 0, TAU); } x.fill(); x.restore(); }
+    }
+    // particles
+    x.globalCompositeOperation = 'lighter';
+    for (const p of S.parts) { const f = p.life / p.max; if (p.k === 'f') { sprite(x, f < .45 ? spr.fire1 : spr.fire2, p.x, p.y, 0, p.r * 2.4 * (1 - f * .55) / 32, 1 - f); } else if (p.k === 'e') { sprite(x, spr.gold, p.x, p.y, 0, p.r * 4 / 16, 1 - f); } else if (p.k === 'g') { sprite(x, spr.gold, p.x, p.y, 0, p.r * (1 + f) / 16, (1 - f) * .8); } }
+    x.globalCompositeOperation = 'source-over';
+    for (const p of S.parts) if (p.k === 's') { const f = p.life / p.max; sprite(x, spr.smoke, p.x, p.y, 0, p.r * (1 + f * 2) * 2 / 32, (1 - f) * .7); }
+    drawJar(x, true); drawLabel(x);
+    x.restore();
+    // floats
+    for (const f of S.floats) { f.t += dt; const k = f.t / 2.4, a = k < .15 ? k / .15 : 1 - (k - .15) / .85; x.globalAlpha = clamp(a, 0, 1); x.fillStyle = f.col; x.textAlign = 'center'; x.font = `900 ${(f.big ? 5.5 : 4) * u}px Vazirmatn,Tahoma,sans-serif`; x.shadowColor = f.col; x.shadowBlur = u * 2; x.fillText(f.text, G.cx, G.top - 5 * u - k * 14 * u); x.shadowBlur = 0; x.globalAlpha = 1; }
+    S.floats = S.floats.filter(f => f.t < 2.4);
+    if (S.flash > 0) { const v = x.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .35, w / 2, h / 2, Math.max(w, h) * .75); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, `rgba(${S.flashCol},${S.flash * .28})`); x.fillStyle = v; x.fillRect(0, 0, w, h); }
+  });
+  window.__jar = { S, onPrice };
+  return () => { dead = true; stop(); cv.destroy(); timers.forEach(clearInterval); };
+}
+
+/* ============================ ۳) حباب‌های کریپتو ============================ */
+function cryptoWidget(root, api) {
+  const cv = mkCanvas(root);
+  const COINS = [['bitcoin', 'BTC', 'BTCUSDT', 100000], ['ethereum', 'ETH', 'ETHUSDT', 3500], ['solana', 'SOL', 'SOLUSDT', 180], ['binancecoin', 'BNB', 'BNBUSDT', 650], ['ripple', 'XRP', 'XRPUSDT', 2.2], ['dogecoin', 'DOGE', 'DOGEUSDT', .3], ['the-open-network', 'TON', 'TONUSDT', 5], ['cardano', 'ADA', 'ADAUSDT', .8], ['tron', 'TRX', 'TRXUSDT', .25], ['avalanche-2', 'AVAX', 'AVAXUSDT', 38], ['chainlink', 'LINK', 'LINKUSDT', 16], ['sui', 'SUI', 'SUIUSDT', 3.5], ['shiba-inu', 'SHIB', 'SHIBUSDT', .000022], ['litecoin', 'LTC', 'LTCUSDT', 100]];
+  let dead = false, demo = false, timers = [];
+  const B = COINS.map(c => ({ id: c[0], sym: c[1], bn: c[2], price: null, chg: 0, x: 0, y: 0, vx: rnd(-20, 20), vy: rnd(-20, 20), r: 10, tr: 40, pulse: 0, ring: 0, rc: '255,255,255', seed: rnd(0, 9) }));
+  const dem = Object.fromEntries(COINS.map(c => [c[0], { p: c[3], c: rnd(-6, 6) }]));
+  const st = panel(root, '', ''); st.style.cssText = 'left:12px;top:70px';
+  let placed = false;
+  async function fetchPrices() {
+    return firstOk([
+      async () => { const j = await getJSON('https://api.coingecko.com/api/v3/simple/price?ids=' + COINS.map(c => c[0]).join(',') + '&vs_currencies=usd&include_24hr_change=true'); const o = {}; COINS.forEach(c => { const d = j[c[0]]; if (d && d.usd != null) o[c[0]] = { p: d.usd, c: d.usd_24h_change || 0 }; }); if (!Object.keys(o).length) throw 0; return o; },
+      async () => { const j = await getJSON('https://api.binance.com/api/v3/ticker/24hr?symbols=' + encodeURIComponent(JSON.stringify(COINS.map(c => c[2])))); const o = {}; j.forEach(d => { const c = COINS.find(c => c[2] === d.symbol); if (c) o[c[0]] = { p: +d.lastPrice, c: +d.priceChangePercent }; }); if (!Object.keys(o).length) throw 0; return o; },
+      async () => { const j = await getJSON('https://data-api.binance.vision/api/v3/ticker/24hr?symbols=' + encodeURIComponent(JSON.stringify(COINS.map(c => c[2])))); const o = {}; j.forEach(d => { const c = COINS.find(c => c[2] === d.symbol); if (c) o[c[0]] = { p: +d.lastPrice, c: +d.priceChangePercent }; }); if (!Object.keys(o).length) throw 0; return o; }
+    ]);
+  }
+  function apply(o) {
+    for (const b of B) { const d = o[b.id]; if (!d) continue; if (b.price != null && d.p !== b.price) { b.pulse = 1; b.ring = 1; b.rc = d.p > b.price ? '80,255,160' : '255,90,80'; } b.price = d.p; b.chg = d.c; }
+    sizes();
+  }
+  function sizes() {
+    const w = cv.w, h = cv.h, raw = B.map(b => .62 + Math.min(Math.abs(b.chg), 10) / 10 * .9 + (b.id === 'bitcoin' ? .25 : 0));
+    const A = raw.reduce((s, r) => s + Math.PI * r * r, 0), k = Math.sqrt(.46 * (w * (h - 90)) / A);
+    B.forEach((b, i) => b.tr = raw[i] * k);
+  }
+  cv.onresize = sizes;
+  async function poll() {
+    if (dead) return;
+    try { const o = await fetchPrices(); if (dead) return; demo = false; api.status('زنده', 'ok'); apply(o); }
+    catch (e) { if (dead) return; demo = true; api.status('دمو · داده زنده در دسترس نیست', 'warn'); for (const c of COINS) { const d = dem[c[0]]; d.p *= 1 + rnd(-.004, .004); d.c += rnd(-.5, .5); } apply(dem); }
+  }
+  poll(); timers.push(setInterval(poll, CONFIG.cryptoRefreshSec * 1000));
+  const fmtP = p => p == null ? '…' : p >= 1000 ? '$' + Math.round(p).toLocaleString('en') : p >= 1 ? '$' + p.toFixed(2) : p >= .01 ? '$' + p.toFixed(4) : '$' + p.toPrecision(3);
+  cv.c.addEventListener('pointerdown', e => { const r = cv.c.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top; for (const b of B) { const d = Math.hypot(b.x - mx, b.y - my); if (d < b.r) { b.vx += (b.x - mx) / d * 260 || 0; b.vy += (b.y - my) / d * 260 || 0; b.pulse = 1; } } });
+  const stop = loop((dt, t) => {
+    const w = cv.w, h = cv.h, x = cv.begin();
+    if (!placed && w > 0) { B.forEach(b => { b.x = rnd(w * .2, w * .8); b.y = rnd(h * .3, h * .8); }); sizes(); placed = true; }
+    const bg = x.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, '#060912'); bg.addColorStop(1, '#0c1222'); x.fillStyle = bg; x.fillRect(0, 0, w, h);
+    x.strokeStyle = 'rgba(255,255,255,.035)'; x.lineWidth = 1; for (let i = 0; i < w; i += 48) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, h); x.stroke(); } for (let i = 0; i < h; i += 48) { x.beginPath(); x.moveTo(0, i); x.lineTo(w, i); x.stroke(); }
+    const up = B.filter(b => b.chg >= 0).length; st.innerHTML = `بازار ۲۴ ساعته<br><b style="color:#5dffb0">▲ ${nf(up)}</b> &nbsp; <b style="color:#ff7a6b">▼ ${nf(B.length - up)}</b>${demo ? '<br><span style="color:#ffc04d">حالت دمو</span>' : ''}`;
+    for (const b of B) {
+      b.r += (b.tr - b.r) * Math.min(1, dt * 4); b.pulse = Math.max(0, b.pulse - dt * 1.6); b.ring = Math.max(0, b.ring - dt * .8);
+      b.vx += (w / 2 - b.x) * .35 * dt + Math.sin(t * .6 + b.seed) * 14 * dt; b.vy += ((h + 50) / 2 - b.y) * .35 * dt + Math.cos(t * .5 + b.seed * 1.7) * 14 * dt;
+    }
+    for (let k = 0; k < 3; k++) for (let i = 0; i < B.length; i++) for (let j = i + 1; j < B.length; j++) {
+      const a = B[i], c = B[j], dx = c.x - a.x, dy = c.y - a.y, d = Math.hypot(dx, dy) || .01, m = a.r + c.r + 3;
+      if (d < m) { const o = (m - d) / 2, nx = dx / d, ny = dy / d, wa = c.r / (a.r + c.r), wc = a.r / (a.r + c.r); a.x -= nx * o * 2 * wa; a.y -= ny * o * 2 * wa; c.x += nx * o * 2 * wc; c.y += ny * o * 2 * wc; const vn = (c.vx - a.vx) * nx + (c.vy - a.vy) * ny; if (vn < 0) { a.vx += nx * vn * .5; a.vy += ny * vn * .5; c.vx -= nx * vn * .5; c.vy -= ny * vn * .5; } }
+    }
+    for (const b of B) { b.vx *= Math.pow(.35, dt); b.vy *= Math.pow(.35, dt); b.x += b.vx * dt; b.y += b.vy * dt; if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx); } if (b.x > w - b.r) { b.x = w - b.r; b.vx = -Math.abs(b.vx); } if (b.y < b.r + 56) { b.y = b.r + 56; b.vy = Math.abs(b.vy); } if (b.y > h - b.r) { b.y = h - b.r; b.vy = -Math.abs(b.vy); } }
+    for (const b of [...B].sort((a, c) => a.r - c.r)) {
+      const upc = b.chg >= 0, rgb = upc ? '40,230,140' : '255,80,90', it = clamp(Math.abs(b.chg) / 8, 0, 1), r = b.r * (1 + b.pulse * .08);
+      x.save(); x.shadowColor = `rgba(${rgb},${.35 + it * .4})`; x.shadowBlur = 18 + it * 22;
+      const g = x.createRadialGradient(b.x - r * .3, b.y - r * .35, r * .05, b.x, b.y, r); g.addColorStop(0, `rgba(${rgb},${.55 + it * .2})`); g.addColorStop(.7, `rgba(${rgb},${.22 + it * .2})`); g.addColorStop(1, `rgba(${rgb},${.55 + it * .25})`);
+      x.fillStyle = g; x.beginPath(); x.arc(b.x, b.y, r, 0, TAU); x.fill(); x.shadowBlur = 0; x.strokeStyle = `rgba(${rgb},.9)`; x.lineWidth = 2; x.stroke();
+      x.fillStyle = 'rgba(255,255,255,.22)'; x.beginPath(); x.ellipse(b.x - r * .28, b.y - r * .5, r * .38, r * .18, -.5, 0, TAU); x.fill(); x.restore();
+      if (b.ring > 0) { x.strokeStyle = `rgba(${b.rc},${b.ring * .8})`; x.lineWidth = 3; x.beginPath(); x.arc(b.x, b.y, r + (1 - b.ring) * r * .5, 0, TAU); x.stroke(); }
+      x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#fff'; x.font = `900 ${r * .34}px Vazirmatn,Tahoma,sans-serif`; x.fillText(b.sym, b.x, b.y - r * .3);
+      x.font = `600 ${r * .2}px Vazirmatn,Tahoma,sans-serif`; x.fillStyle = 'rgba(255,255,255,.92)'; x.fillText(fmtP(b.price), b.x, b.y + r * .06);
+      x.font = `900 ${r * .24}px Vazirmatn,Tahoma,sans-serif`; x.fillStyle = upc ? '#b8ffd9' : '#ffc1c1'; x.fillText((upc ? '▲ ' : '▼ ') + nf(Math.abs(b.chg), 2) + '٪', b.x, b.y + r * .36);
+    }
+  });
+  return () => { dead = true; stop(); cv.destroy(); timers.forEach(clearInterval); };
+}
+
+/* ============================ ۴) آب‌وهوا ============================ */
+const WX = { 0: ['آسمان صاف', '☀️'], 1: ['عمدتاً صاف', '🌤️'], 2: ['نیمه‌ابری', '⛅'], 3: ['ابری', '☁️'], 45: ['مه', '🌫️'], 48: ['مه یخ‌زده', '🌫️'], 51: ['نم‌نم باران', '🌦️'], 53: ['نم‌نم باران', '🌦️'], 55: ['نم‌نم شدید', '🌧️'], 56: ['نم‌نم یخ‌زده', '🌧️'], 57: ['نم‌نم یخ‌زده', '🌧️'], 61: ['باران ملایم', '🌧️'], 63: ['باران', '🌧️'], 65: ['باران شدید', '🌧️'], 66: ['باران یخ‌زده', '🌧️'], 67: ['باران یخ‌زده', '🌧️'], 71: ['برف ملایم', '🌨️'], 73: ['برف', '🌨️'], 75: ['برف سنگین', '❄️'], 77: ['دانه‌برف', '🌨️'], 80: ['رگبار ملایم', '🌦️'], 81: ['رگبار', '🌧️'], 82: ['رگبار شدید', '⛈️'], 85: ['رگبار برف', '🌨️'], 86: ['رگبار برف شدید', '🌨️'], 95: ['رعد و برق', '⛈️'], 96: ['رعد و تگرگ', '⛈️'], 99: ['تگرگ شدید', '⛈️'] };
+function wxKind(c) { if (c <= 1) return 'clear'; if (c === 2) return 'partly'; if (c === 3) return 'cloudy'; if (c === 45 || c === 48) return 'fog'; if (c >= 51 && c <= 57) return 'drizzle'; if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) return 'rain'; if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'snow'; if (c >= 95) return 'thunder'; return 'cloudy'; }
+
+function weatherWidget(root, api) {
+  const cv = mkCanvas(root);
+  let dead = false, timers = [], D = null, loc = null, place = '';
+  const ov = document.createElement('div'); ov.className = 'wx'; root.appendChild(ov);
+  const hrs = panel(root, 'hours', '');
+  const sc = { clouds: [], drops: [], flakes: [], stars: [], bolt: 0, boltPts: null, flash: 0, city: [] };
+  for (let i = 0; i < 160; i++) sc.stars.push({ x: Math.random(), y: Math.random() * .7, s: rnd(.4, 1.6), p: rnd(0, 9) });
+  for (let i = 0; i < 12; i++) sc.clouds.push({ x: Math.random(), y: rnd(.06, .42), s: rnd(.6, 1.5), v: rnd(.004, .012), puffs: Array.from({ length: 5 }, (_, k) => ({ dx: (k - 2) * rnd(.7, 1), dy: rnd(-.25, .2), r: rnd(.7, 1.2) })) });
+  let bl = 0; while (bl < 1.2) { const w = rnd(.025, .06); sc.city.push({ x: bl, w, h: rnd(.05, .2), win: Math.random() }); bl += w; }
+  function build(kind, intensity) { sc.drops = Array.from({ length: Math.round(intensity) }, () => ({ x: Math.random(), y: Math.random(), l: rnd(.6, 1.4), v: rnd(.8, 1.3) })); sc.flakes = Array.from({ length: Math.round(intensity) }, () => ({ x: Math.random(), y: Math.random(), r: rnd(1, 3.2), v: rnd(.4, 1), p: rnd(0, 9) })); }
+  async function load() {
+    if (dead) return;
+    try {
+      if (!loc) { loc = await ensureLoc(api); if (dead) return; api.status('گرفتن آب‌وهوا…', 'warn'); getJSON(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${loc.lat}&longitude=${loc.lon}&localityLanguage=fa`).then(j => { place = j.city || j.locality || j.principalSubdivision || ''; render(); }).catch(() => { }); }
+      const j = await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day,precipitation&hourly=temperature_2m,weather_code,is_day&timezone=auto&forecast_days=2`);
+      D = j; api.status('زنده · Open-Meteo', 'ok');
+      const c = j.current, k = wxKind(c.weather_code); build(k, k === 'rain' ? 320 : k === 'thunder' ? 420 : k === 'drizzle' ? 140 : k === 'snow' ? 200 : 0); render();
+    } catch (e) { if (!D) { api.status('خطا در دریافت آب‌وهوا', 'err'); ov.innerHTML = '<div class="city">اتصال برقرار نشد. اینترنت رو چک کن.</div>'; } }
+  }
+  function render() {
+    if (!D) return; const c = D.current, w = WX[c.weather_code] || ['—', '🌡️'];
+    ov.innerHTML = `<div class="city">📍 ${place || 'موقعیت شما'}${loc && loc.approx ? ' (تقریبی)' : ''}</div><div class="temp">${Math.round(c.temperature_2m)}°</div><div class="cond">${w[1]} ${w[0]}</div><div class="meta"><span>🌡️ حس: ${nf(Math.round(c.apparent_temperature))}°</span><span>💧 رطوبت: ${nf(c.relative_humidity_2m)}٪</span><span>💨 باد: ${nf(Math.round(c.wind_speed_10m))} km/h</span></div>`;
+    const now = new Date(c.time), idx = D.hourly.time.findIndex(t => new Date(t) >= now); const from = Math.max(0, idx);
+    hrs.innerHTML = D.hourly.time.slice(from, from + 12).map((t, i) => `<div>${new Date(t).getHours()}:00<span>${(WX[D.hourly.weather_code[from + i]] || [0, '🌡️'])[1]}</span>${Math.round(D.hourly.temperature_2m[from + i])}°</div>`).join('');
+  }
+  load(); timers.push(setInterval(load, 600000));
+  const cloud = (x, c, px, py, s, col, al) => { x.fillStyle = col; x.globalAlpha = al; c.puffs.forEach(p => { x.beginPath(); x.arc(px + p.dx * 60 * s, py + p.dy * 60 * s, p.r * 46 * s, 0, TAU); x.fill(); }); x.beginPath(); x.ellipse(px, py + 30 * s, 150 * s, 30 * s, 0, 0, TAU); x.fill(); x.globalAlpha = 1; };
+  const stop = loop((dt, t) => {
+    const w = cv.w, h = cv.h, x = cv.begin();
+    const c = D && D.current, code = c ? c.weather_code : 1, day = c ? !!c.is_day : true, k = wxKind(code), wind = c ? c.wind_speed_10m : 8;
+    const pal = { clear: day ? ['#1b6fd1', '#8ed0ff'] : ['#040a1c', '#14264c'], partly: day ? ['#2d78c8', '#9cc9ec'] : ['#060d22', '#1a2a4c'], cloudy: day ? ['#5f7285', '#a9b8c6'] : ['#0e1522', '#2a3648'], fog: day ? ['#8a98a6', '#c5ced6'] : ['#1a2230', '#3a4658'], drizzle: day ? ['#44586c', '#8397aa'] : ['#0b1320', '#26364a'], rain: day ? ['#2a3a4c', '#5a6c80'] : ['#070c16', '#1c2838'], snow: day ? ['#7586a0', '#c4d0de'] : ['#141c2e', '#3a4864'], thunder: day ? ['#1e2433', '#4a4f66'] : ['#05070f', '#1a1e30'] }[k];
+    const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, pal[0]); g.addColorStop(1, pal[1]); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    if (!day && (k === 'clear' || k === 'partly')) { sc.stars.forEach(s => { x.globalAlpha = .4 + .6 * Math.abs(Math.sin(t * 1.2 + s.p)); x.fillStyle = '#fff'; x.beginPath(); x.arc(s.x * w, s.y * h, s.s, 0, TAU); x.fill(); }); x.globalAlpha = 1; }
+    const lx = w * .74, ly = h * .22, big = Math.min(w, h) * .13;
+    if (k === 'clear' || k === 'partly') {
+      if (day) { const sg = x.createRadialGradient(lx, ly, 0, lx, ly, big * 4); sg.addColorStop(0, 'rgba(255,240,170,.9)'); sg.addColorStop(.25, 'rgba(255,210,100,.35)'); sg.addColorStop(1, 'rgba(255,200,80,0)'); x.fillStyle = sg; x.fillRect(0, 0, w, h); x.save(); x.translate(lx, ly); x.rotate(t * .05); x.strokeStyle = 'rgba(255,235,150,.25)'; x.lineWidth = 3; for (let i = 0; i < 14; i++) { x.rotate(TAU / 14); x.beginPath(); x.moveTo(big * 1.3, 0); x.lineTo(big * (2.1 + .3 * Math.sin(t * 2 + i)), 0); x.stroke(); } x.restore(); x.fillStyle = '#fff3b0'; x.beginPath(); x.arc(lx, ly, big, 0, TAU); x.fill(); }
+      else { x.shadowColor = '#cfe0ff'; x.shadowBlur = 50; x.fillStyle = '#eef3ff'; x.beginPath(); x.arc(lx, ly, big * .75, 0, TAU); x.fill(); x.shadowBlur = 0; x.fillStyle = pal[0]; x.beginPath(); x.arc(lx + big * .32, ly - big * .1, big * .68, 0, TAU); x.fill(); }
+    }
+    const cmul = { clear: 0, partly: .5, cloudy: 1, fog: .6, drizzle: 1, rain: 1, snow: 1, thunder: 1 }[k];
+    const ccol = k === 'rain' || k === 'thunder' || k === 'drizzle' ? (day ? '#6d7c8c' : '#2a3544') : (day ? '#ffffff' : '#56627a');
+    sc.clouds.forEach((cl, i) => { if (i >= 12 * cmul) return; cl.x += cl.v * dt * (1 + wind / 20); if (cl.x > 1.3) cl.x = -.3; cloud(x, cl, cl.x * w, cl.y * h, cl.s * Math.max(.6, w / 900), ccol, k === 'cloudy' ? .88 : .72); });
+    if (k === 'fog') { for (let i = 0; i < 4; i++) { const fy = h * (.45 + i * .12), fg = x.createLinearGradient(0, fy - 60, 0, fy + 60); fg.addColorStop(0, 'rgba(220,228,236,0)'); fg.addColorStop(.5, 'rgba(220,228,236,.35)'); fg.addColorStop(1, 'rgba(220,228,236,0)'); x.fillStyle = fg; x.save(); x.translate(Math.sin(t * .1 + i) * 50, 0); x.fillRect(-60, fy - 60, w + 120, 120); x.restore(); } }
+    if (k === 'rain' || k === 'drizzle' || k === 'thunder') { const sl = clamp(wind / 40, 0, .6) + .08; x.strokeStyle = 'rgba(190,215,255,.55)'; x.lineWidth = k === 'drizzle' ? 1 : 1.5; x.beginPath(); sc.drops.forEach(d => { d.y += d.v * dt * 1.6; d.x -= sl * dt * 1.0 * d.v; if (d.y > 1) { d.y = -.05; d.x = Math.random() * 1.2; } if (d.x < 0) d.x += 1; const px = d.x * w, py = d.y * h, l = 22 * d.l; x.moveTo(px, py); x.lineTo(px - sl * l, py + l); }); x.stroke(); }
+    if (k === 'snow') { x.fillStyle = 'rgba(255,255,255,.9)'; sc.flakes.forEach(f => { f.y += f.v * dt * .12; f.x += Math.sin(t * .8 + f.p) * dt * .02 - wind * dt * .0008; if (f.y > 1.02) { f.y = -.02; f.x = Math.random(); } x.beginPath(); x.arc(((f.x % 1 + 1) % 1) * w, f.y * h, f.r, 0, TAU); x.fill(); }); }
+    if (k === 'thunder') { sc.bolt -= dt; if (sc.bolt <= 0) { sc.bolt = rnd(2.5, 7); sc.flash = 1; const pts = []; let bx = rnd(.2, .8) * w, by = h * .1; pts.push([bx, by]); while (by < h * .62) { bx += rnd(-45, 45); by += rnd(25, 55); pts.push([bx, by]); } sc.boltPts = pts; } sc.flash = Math.max(0, sc.flash - dt * 2.5); if (sc.flash > .3 && sc.boltPts) { x.strokeStyle = `rgba(255,255,255,${sc.flash})`; x.shadowColor = '#bcd0ff'; x.shadowBlur = 24; x.lineWidth = 3; x.beginPath(); sc.boltPts.forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1])); x.stroke(); x.shadowBlur = 0; } x.fillStyle = `rgba(220,230,255,${sc.flash * .35})`; x.fillRect(0, 0, w, h); }
+    // skyline
+    const gy = h - 6; x.fillStyle = day ? 'rgba(10,18,30,.55)' : 'rgba(2,4,10,.85)'; sc.city.forEach(b => { const bw = b.w * w, bh = b.h * h * .9, bx = b.x * w; x.fillRect(bx, gy - bh, bw, bh + 6); if (!day) { x.fillStyle = 'rgba(255,214,120,.8)'; for (let yy = gy - bh + 6; yy < gy - 4; yy += 9) for (let xx = bx + 3; xx < bx + bw - 4; xx += 7) if (Math.sin(xx * 12.9 + yy * 7.3 + b.win * 99) > .1) x.fillRect(xx, yy, 3, 4); x.fillStyle = 'rgba(2,4,10,.85)'; } });
+  });
+  return () => { dead = true; stop(); cv.destroy(); timers.forEach(clearInterval); };
+}
+
+/* ============================ ۵) سرعت‌سنج HUD ============================ */
+function speedWidget(root, api) {
+  const cv = mkCanvas(root);
+  const S = { v: 0, disp: 0, max: 0, trip: 0, alt: null, head: null, acc: null, last: null, sim: false, limit: store.get('spdLimit', 120), scale: store.get('spdScale', 240), mirror: store.get('spdMirror', false), wid: null, fix: false };
+  let dead = false;
+  const setMirror = () => { root.style.transform = S.mirror ? 'scaleX(-1)' : ''; };
+  setMirror();
+  seg(api.ctrl, [[180, '۱۸۰'], [240, '۲۴۰'], [320, '۳۲۰']], S.scale, v => { S.scale = v; store.set('spdScale', v); });
+  const lb = document.createElement('span'); lb.className = 'lbl'; lb.textContent = 'هشدار از:'; api.ctrl.appendChild(lb);
+  const li = document.createElement('input'); li.type = 'number'; li.className = 'num'; li.style.width = '70px'; li.value = S.limit; li.onchange = () => { S.limit = +li.value || 0; store.set('spdLimit', S.limit); }; api.ctrl.appendChild(li);
+  btn(api.ctrl, '🪞 آینه (HUD)', b => { S.mirror = !S.mirror; store.set('spdMirror', S.mirror); b.classList.toggle('on', S.mirror); setMirror(); }).classList.toggle('on', S.mirror);
+  btn(api.ctrl, '🎮 شبیه‌ساز', b => { S.sim = !S.sim; b.classList.toggle('on', S.sim); });
+  api.status('منتظر GPS…', 'warn');
+  if (!navigator.geolocation) api.status('GPS پشتیبانی نمی‌شه', 'err');
+  else S.wid = navigator.geolocation.watchPosition(p => {
+    const c = p.coords; let v = c.speed, d = 0;
+    if (S.last) { d = hav(S.last.lat, S.last.lon, c.latitude, c.longitude); if (v == null || isNaN(v)) { const dt = (p.timestamp - S.last.t) / 1000; v = dt > 0 ? d * 1000 / dt : 0; } }
+    if (v == null || isNaN(v)) v = 0;
+    S.v = v * 3.6; if (S.v > 2 && d < .5) S.trip += d; S.max = Math.max(S.max, S.v); S.alt = c.altitude; if (S.v > 3 && c.heading != null && !isNaN(c.heading)) S.head = c.heading; S.acc = c.accuracy; S.last = { t: p.timestamp, lat: c.latitude, lon: c.longitude }; S.fix = true; api.status('GPS متصل · دقت ' + nf(Math.round(c.accuracy)) + ' متر', 'ok');
+  }, e => { api.status(e.code === 1 ? 'دسترسی لوکیشن رد شد' : 'GPS در دسترس نیست', 'err'); }, { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 });
+  const stop = loop((dt, t) => {
+    const w = cv.w, h = cv.h, x = cv.begin(); if (S.sim) { S.v = clamp(95 + 75 * Math.sin(t * .35) + 12 * Math.sin(t * 1.7), 0, S.scale); S.max = Math.max(S.max, S.v); S.trip += S.v / 3600 * dt; }
+    S.disp += (S.v - S.disp) * (1 - Math.exp(-dt * 6));
+    const over = S.limit > 0 && S.disp > S.limit, bgc = over ? `rgba(120,0,0,${.25 + .15 * Math.sin(t * 8)})` : 'rgba(0,0,0,0)';
+    x.fillStyle = '#03060d'; x.fillRect(0, 0, w, h); const bg = x.createRadialGradient(w / 2, h * .48, 0, w / 2, h * .48, Math.max(w, h) * .65); bg.addColorStop(0, over ? '#2a0a0f' : '#0a1830'); bg.addColorStop(1, '#03060d'); x.fillStyle = bg; x.fillRect(0, 0, w, h);
+    const av = h - 150, R = Math.max(80, Math.min(w * .44, av / 2 * .97)), cx = w / 2, cy = 66 + av / 2, a0 = 135 * RAD, a1 = 405 * RAD, f = clamp(S.disp / S.scale, 0, 1);
+    const col = over ? '#ff3b4a' : `hsl(${190 - f * 150},100%,58%)`;
+    x.lineCap = 'round'; x.lineWidth = R * .09; x.strokeStyle = 'rgba(255,255,255,.08)'; x.beginPath(); x.arc(cx, cy, R, a0, a1); x.stroke();
+    x.save(); x.shadowColor = col; x.shadowBlur = 28; const gr = x.createLinearGradient(cx - R, 0, cx + R, 0); gr.addColorStop(0, '#19e3ff'); gr.addColorStop(.55, '#5dff8f'); gr.addColorStop(.8, '#ffd23f'); gr.addColorStop(1, '#ff3b4a'); x.strokeStyle = over ? '#ff3b4a' : gr; x.beginPath(); x.arc(cx, cy, R, a0, a0 + (a1 - a0) * f); x.stroke(); x.restore();
+    const step = S.scale / 12; x.textAlign = 'center'; x.textBaseline = 'middle';
+    for (let i = 0; i <= 12; i++) { const a = a0 + (a1 - a0) * i / 12, r1 = R * .86, r2 = R * .78; x.strokeStyle = 'rgba(255,255,255,.55)'; x.lineWidth = 2; x.beginPath(); x.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); x.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2); x.stroke(); x.fillStyle = 'rgba(255,255,255,.72)'; x.font = `700 ${R * .075}px system-ui,sans-serif`; x.fillText(Math.round(step * i), cx + Math.cos(a) * R * .68, cy + Math.sin(a) * R * .68); }
+    if (S.limit > 0 && S.limit < S.scale) { const a = a0 + (a1 - a0) * S.limit / S.scale; x.strokeStyle = '#ff3b4a'; x.lineWidth = 4; x.beginPath(); x.moveTo(cx + Math.cos(a) * R * 1.05, cy + Math.sin(a) * R * 1.05); x.lineTo(cx + Math.cos(a) * R * .93, cy + Math.sin(a) * R * .93); x.stroke(); }
+    const na = a0 + (a1 - a0) * f; x.save(); x.shadowColor = col; x.shadowBlur = 16; x.strokeStyle = col; x.lineWidth = R * .02; x.beginPath(); x.moveTo(cx + Math.cos(na) * R * .5, cy + Math.sin(na) * R * .5); x.lineTo(cx + Math.cos(na) * R * .96, cy + Math.sin(na) * R * .96); x.stroke(); x.restore();
+    x.fillStyle = '#fff'; x.shadowColor = col; x.shadowBlur = over ? 40 : 22; x.font = `900 ${R * .62}px system-ui,'Segoe UI',sans-serif`; x.fillText(String(Math.round(S.disp)), cx, cy + R * .1); x.shadowBlur = 0;
+    x.fillStyle = col; x.font = `700 ${R * .12}px system-ui,sans-serif`; x.fillText('km/h', cx, cy + R * .48);
+    // info row
+    const info = [['جهت', S.head == null ? '—' : compassFa(S.head) + ' ' + Math.round(S.head) + '°'], ['ارتفاع', S.alt == null ? '—' : nf(Math.round(S.alt)) + ' m'], ['مسافت سفر', nf(S.trip, 1) + ' km'], ['حداکثر', nf(Math.round(S.max)) + ' km/h']];
+    const iy = h - 56, cw = Math.min(w / 4, 190);
+    info.forEach(([l, v], i) => { const px = w / 2 + (i - 1.5) * cw; x.fillStyle = '#7f90b3'; x.font = `600 ${clamp(R * .07, 11, 15)}px Vazirmatn,Tahoma,sans-serif`; x.fillText(l, px, iy); x.fillStyle = '#fff'; x.font = `800 ${clamp(R * .1, 14, 22)}px Vazirmatn,Tahoma,sans-serif`; x.fillText(v, px, iy + clamp(R * .12, 20, 28)); });
+    const now = new Date(); x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,.85)'; x.font = `800 ${clamp(R * .12, 18, 32)}px system-ui`; x.fillText(now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }), 18, 82); x.textAlign = 'center';
+    if (over) { x.fillStyle = '#ff3b4a'; x.font = `900 ${R * .1}px Vazirmatn,Tahoma`; x.fillText('⚠ سرعت غیرمجاز', cx, cy - R * .42); }
+    if (!S.fix && !S.sim) { x.fillStyle = '#ffc04d'; x.font = `600 ${clamp(R * .08, 12, 17)}px Vazirmatn,Tahoma`; x.fillText('منتظر سیگنال GPS… (روی کامپیوتر از «شبیه‌ساز» استفاده کن)', cx, cy - R * .32); }
+  });
+  return () => { dead = true; stop(); cv.destroy(); root.style.transform = ''; if (S.wid != null) navigator.geolocation.clearWatch(S.wid); };
+}
+
+/* ============================ ۶) خورشید و ماه ============================ */
+const SUN = (() => {
+  const dayMs = 864e5, J1970 = 2440588, J2000 = 2451545, e = RAD * 23.4397;
+  const toJ = d => d.valueOf() / dayMs - .5 + J1970, fromJ = j => new Date((j + .5 - J1970) * dayMs), toD = d => toJ(d) - J2000;
+  const M = d => RAD * (357.5291 + .98560028 * d), L = m => m + RAD * (1.9148 * Math.sin(m) + .02 * Math.sin(2 * m) + .0003 * Math.sin(3 * m)) + RAD * 102.9372 + Math.PI;
+  const dec = l => Math.asin(Math.sin(l) * Math.sin(e)), ra = l => Math.atan2(Math.sin(l) * Math.cos(e), Math.cos(l));
+  const J0 = .0009, cyc = (d, lw) => Math.round(d - J0 - lw / TAU), at = (H, lw, n) => J0 + (H + lw) / TAU + n, tr = (ds, m, l) => J2000 + ds + .0053 * Math.sin(m) - .0069 * Math.sin(2 * l);
+  const sid = (d, lw) => RAD * (280.16 + 360.9856235 * d) - lw;
+  return {
+    times(date, lat, lon) { const lw = RAD * -lon, phi = RAD * lat, d = toD(date), n = cyc(d, lw), ds = at(0, lw, n), m = M(ds), l = L(m), de = dec(l), jn = tr(ds, m, l); const cosH = (Math.sin(-.833 * RAD) - Math.sin(phi) * Math.sin(de)) / (Math.cos(phi) * Math.cos(de)); if (cosH > 1 || cosH < -1) return { noon: fromJ(jn), rise: null, set: null }; const w = Math.acos(cosH), a = at(w, lw, n), js = tr(a, m, l); return { noon: fromJ(jn), rise: fromJ(jn - (js - jn)), set: fromJ(js) }; },
+    pos(date, lat, lon, moonP) { const lw = RAD * -lon, phi = RAD * lat, d = toD(date), m = M(d), l = L(m), de = dec(l); let H = sid(d, lw) - ra(l); if (moonP != null) H -= TAU * moonP; const alt = Math.asin(Math.sin(phi) * Math.sin(de) + Math.cos(phi) * Math.cos(de) * Math.cos(H)), az = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(phi) - Math.tan(de) * Math.cos(phi)); return { alt, az, H }; },
+    moon(date) { const jd = date.valueOf() / dayMs + 2440587.5; const p = (((jd - 2451550.1) / 29.530588853) % 1 + 1) % 1; return p; }
+  };
+})();
+function moonName(p) { if (p < .03 || p > .97) return 'ماه نو'; if (p < .22) return 'هلال نو'; if (p < .28) return 'تربیع اول'; if (p < .47) return 'محدب رو به رشد'; if (p < .53) return 'بدر کامل'; if (p < .72) return 'محدب رو به کاهش'; if (p < .78) return 'تربیع آخر'; return 'هلال رو به کاهش'; }
+function drawMoon(x, cx, cy, r, p, glow) {
+  const k = Math.cos(TAU * p), waxing = p < .5; x.save(); x.translate(cx, cy);
+  if (glow) { x.shadowColor = 'rgba(200,220,255,.8)'; x.shadowBlur = r * .9; }
+  x.fillStyle = '#1b2336'; x.beginPath(); x.arc(0, 0, r, 0, TAU); x.fill(); x.shadowBlur = 0;
+  x.scale(waxing ? 1 : -1, 1); x.beginPath(); x.arc(0, 0, r, -Math.PI / 2, Math.PI / 2, false);
+  if (k >= 0) x.ellipse(0, 0, Math.max(.01, r * k), r, 0, Math.PI / 2, -Math.PI / 2, true); else x.ellipse(0, 0, Math.max(.01, r * -k), r, 0, Math.PI / 2, 3 * Math.PI / 2, false);
+  const g = x.createRadialGradient(-r * .2, -r * .2, r * .1, 0, 0, r); g.addColorStop(0, '#fffdf2'); g.addColorStop(1, '#d9d4c0'); x.fillStyle = g; x.fill(); x.save(); x.clip();
+  x.fillStyle = 'rgba(120,110,95,.28)'; [[-.3, -.25, .22], [.25, .1, .3], [-.1, .45, .16], [.45, -.35, .14], [-.5, .2, .12], [.05, -.5, .1]].forEach(([a, b, c]) => { x.beginPath(); x.arc(a * r, b * r, c * r, 0, TAU); x.fill(); }); x.restore(); x.restore();
+}
+function sunWidget(root, api) {
+  const cv = mkCanvas(root); let loc = null, dead = false, timers = [];
+  const sp = panel(root, 'sunl', ''), mp = panel(root, 'moonp', '<canvas id="mc" width="260" height="260"></canvas><div id="mt"></div>'); const mc = $('#mc', mp), mt = $('#mt', mp);
+  const fmt = d => d ? d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) : '—';
+  const dur = ms => { const m = Math.max(0, Math.round(ms / 60000)); return nf(Math.floor(m / 60)) + ' ساعت و ' + nf(m % 60) + ' دقیقه'; };
+  (async () => { api.status('گرفتن لوکیشن…', 'warn'); loc = await ensureLoc(api); if (dead) return; api.status('محاسبه آفلاین · دقیق', 'ok'); upd(); })();
+  function upd() {
+    if (!loc) return; const now = new Date(), tm = SUN.times(now, loc.lat, loc.lon), tmr = SUN.times(new Date(+now + 864e5), loc.lat, loc.lon), p = SUN.moon(now), ps = SUN.pos(now, loc.lat, loc.lon);
+    let nextTxt = '—'; if (tm.rise && tm.set) { if (now < tm.rise) nextTxt = 'طلوع تا ' + dur(tm.rise - now); else if (now < tm.set) nextTxt = 'غروب تا ' + dur(tm.set - now); else nextTxt = 'طلوع فردا تا ' + dur(tmr.rise - now); }
+    sp.innerHTML = `☀️ <b>خورشید</b><br>طلوع: <b>${fmt(tm.rise)}</b> · غروب: <b>${fmt(tm.set)}</b><br>ظهر شرعی (اوج): <b>${fmt(tm.noon)}</b><br>طول روز: <b>${tm.rise ? dur(tm.set - tm.rise) : '—'}</b><br>ارتفاع فعلی: <b>${nf(Math.round(ps.alt / RAD))}°</b><br><span style="color:#ffd36b">${nextTxt}</span>`;
+    mt.innerHTML = `<b>${moonName(p)}</b><br>روشنایی: <b>${nf(Math.round((1 - Math.cos(TAU * p)) / 2 * 100))}٪</b> · سن ماه: <b>${nf(p * 29.53, 1)}</b> روز<br><span class="dim">بدر بعدی: ${nf(((0.5 - p + 1) % 1) * 29.53, 0)} روز دیگر</span>`;
+    const g = mc.getContext('2d'); g.clearRect(0, 0, 260, 260); drawMoon(g, 130, 130, 100, p, true);
+  }
+  timers.push(setInterval(upd, 5000));
+  const skyStops = [[-18, '#02030a', '#0a1030'], [-8, '#0d1038', '#3a2a6a'], [-2, '#2a2060', '#d9703c'], [3, '#3a5a9a', '#ffb070'], [12, '#2f7fd8', '#a8d8ff'], [40, '#2a76d0', '#8cc6f5']];
+  const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+  const skyAt = altDeg => { let i = 0; while (i < skyStops.length - 2 && altDeg > skyStops[i + 1][0]) i++; const a = skyStops[i], b = skyStops[i + 1], f = clamp((altDeg - a[0]) / (b[0] - a[0]), 0, 1); const m = (c1, c2) => hex(c1).map((v, j) => Math.round(v + (hex(c2)[j] - v) * f)); return [`rgb(${m(a[1], b[1])})`, `rgb(${m(a[2], b[2])})`]; };
+  const stars = Array.from({ length: 200 }, () => ({ x: Math.random(), y: Math.random(), s: rnd(.4, 1.5), p: rnd(0, 9) }));
+  const stop = loop((dt, t) => {
+    const w = cv.w, h = cv.h, x = cv.begin(); const now = new Date();
+    const hor = h * .66, Rd = Math.min(w * .44, h * .5);
+    const sunP = loc ? SUN.pos(now, loc.lat, loc.lon) : { alt: .6, az: 0 }, moonP = SUN.moon(now), mpos = loc ? SUN.pos(now, loc.lat, loc.lon, moonP) : { alt: -.3, az: 1 };
+    const altD = sunP.alt / RAD, [c1, c2] = skyAt(altD); const g = x.createLinearGradient(0, 0, 0, hor); g.addColorStop(0, c1); g.addColorStop(1, c2); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    const sa = clamp((-altD - 3) / 12, 0, 1); if (sa > 0) stars.forEach(s => { x.globalAlpha = sa * (.35 + .65 * Math.abs(Math.sin(t + s.p))); x.fillStyle = '#fff'; x.beginPath(); x.arc(s.x * w, s.y * hor, s.s, 0, TAU); x.fill(); }); x.globalAlpha = 1;
+    const place = (po, rad) => ({ x: w / 2 + Math.sin(po.az) * Math.cos(po.alt) * rad * -1, y: hor - Math.sin(po.alt) * rad * .95 });
+    // sun path
+    if (loc) { x.setLineDash([3, 9]); x.strokeStyle = 'rgba(255,230,160,.45)'; x.lineWidth = 2; x.beginPath(); const d0 = new Date(now); d0.setHours(0, 0, 0, 0); let first = true; for (let m = 0; m <= 1440; m += 15) { const q = SUN.pos(new Date(+d0 + m * 60000), loc.lat, loc.lon), pp = place(q, Rd); first ? x.moveTo(pp.x, pp.y) : x.lineTo(pp.x, pp.y); first = false; } x.stroke(); x.setLineDash([]); }
+    const mp2 = place(mpos, Rd), sp2 = place(sunP, Rd), mr = Math.max(16, Rd * .075);
+    // moon
+    x.globalAlpha = mpos.alt < 0 ? .35 : 1; drawMoon(x, mp2.x, mp2.y, mr, moonP, true); x.globalAlpha = 1;
+    // sun
+    const sr = Math.max(20, Rd * .09), gg = x.createRadialGradient(sp2.x, sp2.y, 0, sp2.x, sp2.y, sr * 5); gg.addColorStop(0, 'rgba(255,230,140,.9)'); gg.addColorStop(.2, 'rgba(255,190,80,.35)'); gg.addColorStop(1, 'rgba(255,170,60,0)'); x.globalAlpha = sunP.alt < 0 ? .45 : 1; x.fillStyle = gg; x.fillRect(sp2.x - sr * 5, sp2.y - sr * 5, sr * 10, sr * 10); x.fillStyle = '#fff3b8'; x.beginPath(); x.arc(sp2.x, sp2.y, sr, 0, TAU); x.fill(); x.globalAlpha = 1;
+    // ground
+    const gd = x.createLinearGradient(0, hor, 0, h); gd.addColorStop(0, altD > 0 ? '#16241f' : '#070b12'); gd.addColorStop(1, '#03060a'); x.globalAlpha = .93; x.fillStyle = gd; x.beginPath(); x.moveTo(0, hor); for (let i = 0; i <= 40; i++) { const px = i / 40 * w; x.lineTo(px, hor - Math.abs(Math.sin(i * .8) * 9 + Math.sin(i * 2.1) * 6)); } x.lineTo(w, h); x.lineTo(0, h); x.fill(); x.globalAlpha = 1;
+    x.strokeStyle = 'rgba(255,255,255,.2)'; x.lineWidth = 1; x.beginPath(); x.moveTo(w / 2 - Rd * 1.05, hor); x.lineTo(w / 2 + Rd * 1.05, hor); x.stroke();
+    x.fillStyle = 'rgba(255,255,255,.5)'; x.font = '600 12px Vazirmatn,Tahoma'; x.textAlign = 'center'; x.fillText('شرق', w / 2 - Rd * 1.0, hor + 18); x.fillText('غرب', w / 2 + Rd * 1.0, hor + 18);
+    x.fillStyle = '#fff'; x.font = `900 ${clamp(w * .06, 28, 56)}px Vazirmatn,Tahoma`; x.fillText(now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }), w / 2, 86);
+    x.fillStyle = 'rgba(255,255,255,.65)'; x.font = '600 14px Vazirmatn,Tahoma'; x.fillText(now.toLocaleDateString('fa-IR-u-ca-persian', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), w / 2, 112);
+  });
+  return () => { dead = true; stop(); cv.destroy(); timers.forEach(clearInterval); };
+}
+
+/* ============================ ۷) رادار زلزله ============================ */
+function quakeWidget(root, api) {
+  const cv = mkCanvas(root);
+  const S = { range: store.get('qRange', 1000), span: store.get('qSpan', 'day'), loc: null, q: [], demo: false };
+  let dead = false, timers = [];
+  seg(api.ctrl, [[300, '۳۰۰ km'], [1000, '۱۰۰۰ km'], [3000, '۳۰۰۰ km'], [20000, 'جهان']], S.range, v => { S.range = v; store.set('qRange', v); });
+  seg(api.ctrl, [['day', '۲۴ ساعت'], ['week', '۷ روز (M2.5+)']], S.span, v => { S.span = v; store.set('qSpan', v); load(); });
+  const list = panel(root, 'qlist', '');
+  const magCol = m => m >= 6 ? '#ff2d55' : m >= 5 ? '#ff6a3d' : m >= 4 ? '#ffb02e' : m >= 3 ? '#ffe14d' : '#9be37a';
+  async function load() {
+    if (!S.loc) return;
+    try {
+      const url = S.span === 'day' ? 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson' : 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson';
+      const j = await getJSON(url, { timeout: 15000 }); if (dead) return;
+      S.q = j.features.filter(f => f.geometry && f.properties.mag != null).map(f => ({ id: f.id, mag: f.properties.mag, place: f.properties.place || '', time: f.properties.time, lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1], depth: f.geometry.coordinates[2] }));
+      S.demo = false; api.status('زنده · USGS', 'ok');
+    } catch (e) {
+      if (dead) return; if (!S.q.length) { S.demo = true; const now = Date.now(); S.q = Array.from({ length: 22 }, (_, i) => { const a = rnd(0, TAU), d = rnd(20, 900) * (i % 4 ? 1 : 4); return { id: 'd' + i, mag: rnd(2.5, 6.2), place: 'دمو ' + (i + 1), time: now - rnd(0, 86400000), lat: S.loc.lat + Math.cos(a) * d / KLAT, lon: S.loc.lon + Math.sin(a) * d / KLON(S.loc.lat), depth: rnd(5, 60) }; }); }
+      api.status(S.demo ? 'دمو · USGS در دسترس نیست' : 'خطای شبکه', S.demo ? 'warn' : 'err');
+    }
+  }
+  const ago = ms => { const m = Math.round((Date.now() - ms) / 60000); return m < 60 ? nf(Math.max(1, m)) + ' دقیقه پیش' : m < 1440 ? nf(Math.round(m / 60)) + ' ساعت پیش' : nf(Math.round(m / 1440)) + ' روز پیش'; };
+  (async () => { api.status('گرفتن لوکیشن…', 'warn'); const l = await ensureLoc(api); if (dead) return; S.loc = { lat: l.lat, lon: l.lon }; await load(); timers.push(setInterval(load, 120000)); })();
+  let lastList = 0;
+  const stop = loop((dt, t) => {
+    const w = cv.w, h = cv.h, x = cv.begin(); x.direction = 'ltr'; const bg = x.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * .7); bg.addColorStop(0, '#1d0f0a'); bg.addColorStop(1, '#070304'); x.fillStyle = bg; x.fillRect(0, 0, w, h);
+    if (!S.loc) return; const top = 66, bot = 30, R = Math.max(60, Math.min(w >= 900 ? w - 400 : w - 20, h - top - bot) / 2), cx = w >= 900 ? (w - 300) / 2 : w / 2, cy = top + (h - top - bot) / 2;
+    const O = '255,150,60'; x.strokeStyle = `rgba(${O},.22)`; x.lineWidth = 1; for (let i = 1; i <= 4; i++) { x.beginPath(); x.arc(cx, cy, R * i / 4, 0, TAU); x.stroke(); } x.beginPath(); x.moveTo(cx - R, cy); x.lineTo(cx + R, cy); x.moveTo(cx, cy - R); x.lineTo(cx, cy + R); x.stroke();
+    x.strokeStyle = `rgba(${O},.7)`; x.lineWidth = 2; x.beginPath(); x.arc(cx, cy, R, 0, TAU); x.stroke(); x.fillStyle = `rgba(${O},.75)`; x.font = '600 11px Vazirmatn,Tahoma'; x.textAlign = 'left'; for (let i = 1; i <= 4; i++) x.fillText((S.range * i / 4) + ' km', cx + 4 + R * i / 4 * .707, cy - 4 - R * i / 4 * .707);
+    x.textAlign = 'center'; x.fillStyle = '#ff9a6b'; x.fillText('N', cx, cy - R - 8);
+    const vis = []; for (const q of S.q) { const d = hav(S.loc.lat, S.loc.lon, q.lat, q.lon); if (d > S.range) continue; const b = bearing(S.loc.lat, S.loc.lon, q.lat, q.lon); vis.push({ q, d, sx: cx + Math.sin(b) * d / S.range * R, sy: cy - Math.cos(b) * d / S.range * R }); }
+    vis.sort((a, b) => a.q.mag - b.q.mag);
+    for (const { q, sx, sy } of vis) {
+      const col = magCol(q.mag), age = (Date.now() - q.time) / 36e5, rr = 2.5 + q.mag * 1.9, ph = ((t * (age < 1 ? 1.1 : age < 6 ? .6 : .3)) + q.lat) % 1;
+      x.strokeStyle = col; x.globalAlpha = (1 - ph) * .7; x.lineWidth = 2; x.beginPath(); x.arc(sx, sy, rr + ph * rr * 3.2, 0, TAU); x.stroke(); x.globalAlpha = clamp(1 - age / 48 * .5, .45, 1);
+      x.shadowColor = col; x.shadowBlur = 14; x.fillStyle = col; x.beginPath(); x.arc(sx, sy, rr, 0, TAU); x.fill(); x.shadowBlur = 0; x.globalAlpha = 1;
+      if (q.mag >= 4.5) { x.fillStyle = '#fff'; x.font = '800 12px system-ui'; x.fillText('M' + q.mag.toFixed(1), sx, sy - rr - 5); }
+    }
+    x.fillStyle = '#4dd2ff'; x.shadowColor = '#4dd2ff'; x.shadowBlur = 14; x.beginPath(); x.arc(cx, cy, 5, 0, TAU); x.fill(); x.shadowBlur = 0;
+    if (t - lastList > 2) { lastList = t; const rows = vis.slice().sort((a, b) => b.q.time - a.q.time).slice(0, 9); list.innerHTML = `<div class="dim" style="margin-bottom:4px">${nf(vis.length)} زلزله در این محدوده${S.demo ? ' · دمو' : ''}</div>` + (rows.map(({ q, d }) => `<div class="qrow"><span class="qm" style="background:${magCol(q.mag)}">${nf(q.mag, 1)}</span><span style="flex:1"><span style="direction:ltr;display:block;text-align:right">${q.place.replace(/^\d+(\.\d+)? km \w+ of /, '')}</span><span class="dim">${ago(q.time)} · ${nf(Math.round(d))} km · عمق ${nf(Math.round(q.depth))}</span></span></div>`).join('') || '<div class="dim">زلزله‌ای ثبت نشده 🙂</div>'); }
+  });
+  return () => { dead = true; stop(); cv.destroy(); timers.forEach(clearInterval); };
+}
+
+/* ============================ لیست ویجت‌ها و مسیریابی ============================ */
+const WIDGETS = [
+  { id: 'radar', icon: '📡', title: 'رادار آسمان', desc: 'هواپیماهای بالای سرت با اسم، مقصد و ارتفاع، روی یه رادار سبز. شعاع ۱۰ تا ۲۰۰ کیلومتر.', c: ['#00ffa3', '#0077ff'], tag: 'زنده · لوکیشن', mount: radarWidget },
+  { id: 'dollar', icon: '🫙', title: 'شیشه دلار', desc: 'هرچی دلار گرون‌تر بشه شیشه پرتر می‌شه. سکه و اسکناس می‌ریزه، با ریزش قیمت می‌سوزه 🔥', c: ['#ffd23f', '#2fe08a'], tag: 'هر ۱۰ ثانیه', mount: jarWidget },
+  { id: 'crypto', icon: '🫧', title: 'حباب‌های کریپتو', desc: 'بیت‌کوین و بقیه به شکل حباب. هرچی تغییر ۲۴ ساعته بیشتر، حباب بزرگ‌تر. سبز و قرمز.', c: ['#f7931a', '#9b5cff'], tag: 'زنده', mount: cryptoWidget },
+  { id: 'weather', icon: '⛈️', title: 'آب‌وهوای زنده', desc: 'آسمونی که واقعاً می‌باره: باران، برف، مه، رعد و برق و ستاره، با پیش‌بینی ساعتی.', c: ['#4db8ff', '#6a5cff'], tag: 'لوکیشن', mount: weatherWidget },
+  { id: 'speed', icon: '🏎️', title: 'سرعت‌سنج HUD', desc: 'سرعت‌سنج نئونی با GPS برای مانیتور ماشین. حالت آینه‌ای برای شیشه‌ی جلو و هشدار سرعت.', c: ['#19e3ff', '#ff3b4a'], tag: 'GPS', mount: speedWidget },
+  { id: 'sun', icon: '🌙', title: 'خورشید و ماه', desc: 'موقعیت لحظه‌ای خورشید و ماه در آسمون، ساعت طلوع و غروب، فاز ماه و تاریخ شمسی.', c: ['#ffb36b', '#6a7bff'], tag: 'آفلاین · لوکیشن', mount: sunWidget },
+  { id: 'quake', icon: '🌋', title: 'رادار زلزله', desc: 'زلزله‌های اخیر اطراف تو روی رادار، با شدت، عمق و فاصله. از ۳۰۰ کیلومتر تا کل دنیا.', c: ['#ff6a3d', '#ffd23f'], tag: 'USGS · زنده', mount: quakeWidget },
+];
+const grid = $('#grid');
+WIDGETS.forEach(w => {
+  const a = document.createElement('div'); a.className = 'card'; a.tabIndex = 0; a.setAttribute('role', 'button'); a.style.setProperty('--c1', w.c[0]); a.style.setProperty('--c2', w.c[1]);
+  a.innerHTML = `<span class="ico">${w.icon}</span><span class="tag">${w.tag}</span><h3>${w.title}</h3><p>${w.desc}</p>`;
+  const go = () => { requestFS(); location.hash = '#/' + w.id; };
+  a.onclick = go; a.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } };
+  grid.appendChild(a);
+});
+
+const stage = $('#stage'), wroot = $('#wroot'), ctrl = $('#ctrl'), chip = $('#chip'), chip2 = $('#chip2'), bar = $('#bar');
+let cur = null, wake = null, hideT = null;
+function requestFS() { try { const el = document.documentElement, f = el.requestFullscreen || el.webkitRequestFullscreen; if (f && !document.fullscreenElement) { const r = f.call(el, { navigationUI: 'hide' }); r && r.catch && r.catch(() => { }); } } catch (e) { } }
+async function keepAwake() { try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) { } }
+function showBar() { bar.classList.remove('hide'); clearTimeout(hideT); hideT = setTimeout(() => bar.classList.add('hide'), 6000); }
+['pointermove', 'pointerdown', 'keydown'].forEach(ev => stage.addEventListener(ev, showBar, { passive: true }));
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && cur) keepAwake(); });
+function unmount() { try { cur && cur.destroy && cur.destroy(); } catch (e) { console.error(e); } cur = null; wroot.innerHTML = ''; ctrl.innerHTML = ''; }
+function openW(id) {
+  const w = WIDGETS.find(w => w.id === id); if (!w) return closeW(); unmount();
+  stage.classList.add('on'); document.body.style.overflow = 'hidden'; $('#wtitle').textContent = w.icon + ' ' + w.title; chip.textContent = ''; chip.className = 'chip'; chip2.style.display = 'none';
+  const api = { ctrl, status(t, k = '') { chip.textContent = t; chip.className = 'chip ' + k; }, note(t) { chip2.textContent = t; chip2.style.display = t ? '' : 'none'; } };
+  try { cur = { id, destroy: w.mount(wroot, api) }; } catch (e) { console.error(e); wroot.innerHTML = '<div class="err-msg">خطا در اجرای ویجت: ' + e.message + '</div>'; }
+  showBar(); keepAwake();
+}
+function closeW() { unmount(); stage.classList.remove('on'); document.body.style.overflow = ''; try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) { } try { wake && wake.release(); wake = null; } catch (e) { } }
+function route() { const m = location.hash.match(/^#\/(\w+)/); m ? openW(m[1]) : closeW(); }
+addEventListener('hashchange', route);
+$('#bx').onclick = () => { if (location.hash) history.length > 1 ? history.back() : (location.hash = ''); closeW(); };
+$('#bfs').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : requestFS(); } catch (e) { } };
+addEventListener('keydown', e => { if (e.key === 'Escape' && stage.classList.contains('on') && !document.fullscreenElement) { location.hash = ''; } });
+route();
+</script>
+</body>
+</html>
